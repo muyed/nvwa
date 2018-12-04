@@ -3,7 +3,7 @@ import javaobj
 from flask import Flask, request, g, render_template
 from datetime import timedelta
 from config import configs, APP_ENV
-from rediscluster import StrictRedisCluster
+#from rediscluster import StrictRedisCluster
 from redis import StrictRedis
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -18,7 +18,8 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 
 
 if isinstance(config.REDIS_CONFIG, list):
-    redis = StrictRedisCluster(config.REDIS_CONFIG)
+    #redis = StrictRedisCluster(config.REDIS_CONFIG)
+    pass
 else:
     redis = StrictRedis(host=config.REDIS_CONFIG['host'], port=config.REDIS_CONFIG['port'],
                         password=config.REDIS_CONFIG['password'], socket_timeout=2)
