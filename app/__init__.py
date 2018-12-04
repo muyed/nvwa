@@ -24,7 +24,7 @@ else:
                         password=config.REDIS_CONFIG['password'], socket_timeout=2)
 
 
-Session = sessionmaker(bind=create_engine(config.DB_URL, echo=True))
+Session = sessionmaker(bind=create_engine(config.DB_URL, echo=False))
 
 
 @app.before_request
