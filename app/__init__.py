@@ -3,7 +3,7 @@ import javaobj
 from flask import Flask, request, g, render_template
 from datetime import timedelta
 from config import configs, APP_ENV
-#from rediscluster import StrictRedisCluster
+# from rediscluster import StrictRedisCluster
 from redis import StrictRedis
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
