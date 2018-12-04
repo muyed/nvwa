@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  {% include 'common/head.html' %}
+
+  <body>
+
+    {% include 'common/navbar.html' %}
+
+    <div class="container">
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+          <form method="get" action="/role/list.html">
+              <div class="row">
+                  <div class="col-lg-6">
+                      <div class="input-group">
+                          <span class="input-group-addon" id="sizing-addon2">鼠名</span>
+                          <input type="text" class="form-control" name="username" value="{{query.username}}" aria-describedby="sizing-addon2">
+                      </div>
+                  </div>
+                  <div class="col-lg-6">
+                      <button type="submit" class="btn btn-default">查询</button>
+                  </div>
+              </div>
+              <br>
+
+              <table data-toggle="table">
+                  <thead>
+                  <tr>
+                      <th>id</th>
+                      <th>鼠名</th>
+                      <th>角色</th>
+                      <th>创建时间</th>
+                      <th>修改时间</th>
+                      <th>
+                          操作
+                          <a href="/role/add.html">增加</a>
+                      </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for role in roles %}
+                  <tr>
+                      <td>{{role.id}}</td>
+                      <td>{{role.username}}</td>
+                      <td>{{role.role}}</td>
+                      <td>{{role.gmt_create}}</td>
+                      <td>{{role.gmt_modified}}</td>
+                      <td>
+                          <a href="javascript:void (0)" onclick="showDel({{role.id}})">删除</a>
+                      </td>
+                  </tr>
+                  {% endfor %}
+                  </tbody>
+              </table>
+              {% include 'common/page.html' %}
+          </form>
+      </div>
+
+    </div>
+
+
+    <div id="delModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">删除用户角色</h4>
+                </div>
+                <div class="modal-body">
+                    <p>确定要删除id为【<b id="delId"></b>】的用户角色吗</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="del()">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% include 'common/script.html' %}
+
+    <script>
+        function showDel(id) {
+            $("#delId").html(id);
+            $("#delModal").modal();
+        }
+
+        function del() {
+            window.location.href = '/role/del/' + $('#delId').html()
+        }
+    </script>
+  </body>
+</html>

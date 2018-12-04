@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  {% include 'common/head.html' %}
+
+  <body>
+
+    {% include 'common/navbar.html' %}
+
+    <div class="container">
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+          <p>新增项目配置</p>
+          <form method="post" action="/gitlab/project/config/add.html" class="form-horizontal">
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">项目</label>
+                  <div class="col-sm-8">
+                      <select class="selectpicker" data-size="10" onchange="changeProjectGroup(this)" required>
+                          <option value="">选择项目组</option>
+                          {% for group in groups %}
+                           <option value="{{group.id}}">{{group.name}}</option>
+                          {% endfor %}
+                      </select> /
+                      <select class="selectpicker" data-size="10" name="project_id" required>
+                          <option value="">选择项目</option>
+                      </select>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">测试job</label>
+                  <div class="col-sm-8">
+                       <input type="text" class="form-control" name="testJob" value="{% if testJob %}{{testJob}}{% endif %}" required>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">预发job</label>
+                  <div class="col-sm-8">
+                       <input type="text" class="form-control" name="preJob" value="{% if preJob %}{{preJob}}{% endif %}" required>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">上线job</label>
+                  <div class="col-sm-8">
+                       <input type="text" class="form-control" name="proJob" value="{% if preJob %}{{proJob}}{% endif %}" required>
+                  </div>
+              </div>
+
+             <div class="form-group">
+                   <div class="col-sm-offset-2 col-sm-8">
+                        <button type="submit" class="btn btn-primary">提交</button>
+                   </div>
+               </div>
+          </form>
+      </div>
+
+        {% if msg %}
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Warning!</strong> {{msg}}
+        </div>
+        {% endif %}
+    </div>
+
+
+    {% include 'common/script.html' %}
+  
+    <script>
+        function changeProjectGroup(obj) {
+            $.ajax({
+                url: '/gitlab/projects/' + $(obj).val(),
+                method: 'get',
+                success: (data) => {
+                    data = JSON.parse(data)
+                    console.log(data.length)
+                    console.log(data)
+                    $("select[name='project_id']").children().not(":eq(0)").remove();
+                    data.forEach(v => $("select[name='project_id']").append("<option value='"+ v.id +"'>"+ v.name +"</option>"));
+                    $("select[name='project_id']").selectpicker('refresh')
+                }
+            })
+        }
+    </script>
+  </body>
+</html>

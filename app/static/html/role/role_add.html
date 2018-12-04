@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  {% include 'common/head.html' %}
+
+  <body>
+
+    {% include 'common/navbar.html' %}
+
+    <div class="container">
+        {% if msg %}
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Warning!</strong> {{msg}}
+        </div>
+        {% endif %}
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+          <p>新增员工角色</p>
+          <form method="post" action="/role/add.html" class="form-horizontal">
+
+              <div class="form-group">
+                  <label class="col-sm-1 control-label">鼠名</label>
+                  <div class="col-sm-11">
+                      <input type="text" class="form-control" name="username" value="{{role.username}}" required>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-1 control-label">角色</label>
+                  <div class="col-sm-11">
+                      <select name="role" class="form-control">
+                          <option value="开发" {% if role.role=='开发' %}selected{% endif %}>开发</option>
+                          <option value="测试" {% if role.role=='测试' %}selected{% endif %}>测试</option>
+                          <option value="运维" {% if role.role=='运维' %}selected{% endif %}>运维</option>
+                          <option value="管理员" {% if role.role=='管理员' %}selected{% endif %}>管理员</option>
+                      </select>
+                  </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary">提交</button>
+          </form>
+      </div>
+
+    </div>
+
+
+    {% include 'common/script.html' %}
+  </body>
+</html>

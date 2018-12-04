@@ -1,0 +1,38 @@
+<!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+              <li class="active"><a href="/">首页</a></li>
+              <li><a href="/task/current.html">进行中</a></li>
+              <li><a href="/task/hist.html">我的历史任务</a></li>
+
+              {% if '管理员' in user.roles %}
+              <li><a href="/task/query.html">全部任务</a></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">系统设置 <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/role/list.html">角色设置</a></li>
+                    <li><a href="/gitlab/project/config/list.html">项目设置</a></li>
+                    <li><a href="/gitlab/manage.html">gitlab设置</a></li>
+                    <li><a href="/jenkins/manage.html">jenkins设置</a></li>
+                </ul>
+              </li>
+              {% endif %}
+
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+              {% if '开发' in user.roles %}
+              <li><a href="/task/add.html">创建任务</a></li>
+              {% endif %}
+
+              <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user.username}} <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                       <li><a href="#">退出登录</a></li>
+                  </ul>
+              </li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
