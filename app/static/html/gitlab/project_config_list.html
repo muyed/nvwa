@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  {% include 'common/head.html' %}
+
+  <body>
+
+    {% include 'common/navbar.html' %}
+
+    <div class="container">
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+          <form method="get" action="/gitlab/project/config/list.html">
+              <div class="row">
+                  <div class="col-lg-6">
+                      <div class="input-group">
+                          <span class="input-group-addon" id="sizing-addon2">项目</span>
+                          <input type="text" class="form-control" name="project_name" value="{{query.project_name}}" aria-describedby="sizing-addon2">
+                      </div>
+                  </div>
+                  <div class="col-lg-6">
+                      <button type="submit" class="btn btn-default">查询</button>
+                  </div>
+              </div>
+              <br>
+
+              <table data-toggle="table">
+                  <thead>
+                  <tr>
+                      <th>id</th>
+                      <th>项目</th>
+                      <th>测试job</th>
+                      <th>预发job</th>
+                      <th>上线job</th>
+                      <th>
+                          操作
+                          <a href="/gitlab/project/config/add.html">增加</a>
+                      </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for config in configs %}
+                  <tr>
+                      <td>{{config.id}}</td>
+                      <td>{{config.project_name}}</td>
+                      <td>{{config.test_job}}</td>
+                      <td>{{config.pre_job}}</td>
+                      <td>{{config.pro_job}}</td>
+                      <td>
+                          <a href="/gitlab/project/config/edit/{{config.id}}.html">编辑</a>
+                          <a href="javascript:void (0)" onclick="showDel({{config.id}})">删除</a>
+                      </td>
+                  </tr>
+                  {% endfor %}
+                  </tbody>
+              </table>
+              {% include 'common/page.html' %}
+          </form>
+      </div>
+
+    </div>
+
+
+    <div id="delModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">删除项目配置</h4>
+                </div>
+                <div class="modal-body">
+                    <p>确定要删除id为【<b id="delId"></b>】的项目配置吗</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="del()">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% include 'common/script.html' %}
+
+    <script>
+        function showDel(id) {
+            $("#delId").html(id);
+            $("#delModal").modal();
+        }
+
+        function del() {
+            window.location.href = '/gitlab/project/config/delete/' + $('#delId').html() + ".html"
+        }
+    </script>
+  </body>
+</html>

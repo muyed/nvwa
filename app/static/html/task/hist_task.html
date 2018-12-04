@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+{% include 'common/head.html' %}
+
+<style>
+    .alert {
+        padding: 15px;
+        margin-bottom: 5px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+
+    .timeline {
+        list-style: none;
+        padding: 20px 0 20px;
+        position: relative;
+    }
+
+    .timeline:before {
+        top: 0;
+        bottom: 0;
+        position: absolute;
+        content: " ";
+        width: 3px;
+        background-color: #eeeeee;
+        left: 50%;
+        margin-left: -1.5px;
+    }
+
+    .timeline > li {
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .timeline > li:before,
+    .timeline > li:after {
+        content: " ";
+        display: table;
+    }
+
+    .timeline > li:after {
+        clear: both;
+    }
+
+    .timeline > li:before,
+    .timeline > li:after {
+        content: " ";
+        display: table;
+    }
+
+    .timeline > li:after {
+        clear: both;
+    }
+
+    .timeline > li > .timeline-panel {
+        width: 46%;
+        float: left;
+        border: 1px solid #d4d4d4;
+        border-radius: 2px;
+        padding: 20px;
+        position: relative;
+        -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+    }
+
+    .timeline > li > .timeline-panel:before {
+        position: absolute;
+        top: 26px;
+        right: -15px;
+        display: inline-block;
+        border-top: 15px solid transparent;
+        border-left: 15px solid #ccc;
+        border-right: 0 solid #ccc;
+        border-bottom: 15px solid transparent;
+        content: " ";
+    }
+
+    .timeline > li > .timeline-panel:after {
+        position: absolute;
+        top: 27px;
+        right: -14px;
+        display: inline-block;
+        border-top: 14px solid transparent;
+        border-left: 14px solid #fff;
+        border-right: 0 solid #fff;
+        border-bottom: 14px solid transparent;
+        content: " ";
+    }
+
+    .timeline > li > .timeline-badge {
+        color: #fff;
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        font-size: 1.4em;
+        text-align: center;
+        position: absolute;
+        top: 16px;
+        left: 50%;
+        margin-left: -25px;
+        background-color: #999999;
+        z-index: 100;
+        border-top-right-radius: 50%;
+        border-top-left-radius: 50%;
+        border-bottom-right-radius: 50%;
+        border-bottom-left-radius: 50%;
+    }
+
+    .timeline > li.timeline-inverted > .timeline-panel {
+        float: right;
+    }
+
+    .timeline > li.timeline-inverted > .timeline-panel:before {
+        border-left-width: 0;
+        border-right-width: 15px;
+        left: -15px;
+        right: auto;
+    }
+
+    .timeline > li.timeline-inverted > .timeline-panel:after {
+        border-left-width: 0;
+        border-right-width: 14px;
+        left: -14px;
+        right: auto;
+    }
+
+    .timeline-badge.primary {
+        background-color: #2e6da4 !important;
+    }
+
+    .timeline-badge.success {
+        background-color: #3f903f !important;
+    }
+
+    .timeline-badge.warning {
+        background-color: #f0ad4e !important;
+    }
+
+    .timeline-badge.danger {
+        background-color: #d9534f !important;
+    }
+
+    .timeline-badge.info {
+        background-color: #5bc0de !important;
+    }
+
+    .timeline-title {
+        margin-top: 0;
+        color: inherit;
+    }
+
+    .timeline-body > p,
+    .timeline-body > ul {
+        margin-bottom: 0;
+    }
+
+    .timeline-body > p + p {
+        margin-top: 5px;
+    }
+
+    .popover {
+        width:auto;
+        max-width:800px;
+    }
+</style>
+<body>
+
+{% include 'common/navbar.html' %}
+
+<div class="container">
+
+    <!-- Main component for a primary marketing message or call to action -->
+    <div class="jumbotron">
+        <form action="/task/hist.html" method="get">
+            <div class="row">
+                {% for task in tasks %}
+
+                <div class="col-sm-6 col-md-4">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading" style="height: 40px">
+                            {{task.title}}
+                            <div style="float: right">
+                                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"
+                                      rel-toggle="popover" title="任务操作日志" data-toggle="tooltip" data-placement="right"></span>
+
+                                <div class="container" style="display: none">
+                                    <ul class="timeline" style="width: 660px">
+                                        {% for log in task.logs %}
+                                        <li {% if loop.index % 2 == 0 %}class="timeline-inverted" {% endif %}>
+                                            <div class="timeline-badge"><i class="glyphicon glyphicon-bell"></i></div>
+                                            <div class="timeline-panel">
+                                                <div class="timeline-heading">
+                                                    <p>
+                                                        <small class="text-muted"><i class="glyphicon glyphicon-time">{{log.gmt_create}}</i></small>
+                                                        <small class="text-muted"><i class="glyphicon glyphicon-user">
+                                                            {{log.operator}} {{log.task_status}}
+                                                        </i></small>
+                                                    </p>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <p>{{log.log}}</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="panel-body" style="height: 300px">
+                            <div style="display: flex;">
+                                <div class="label label-info" style="max-width: 100px" data-toggle="tooltip" data-placement="top" title="{{task.project_name}}">{{task.project_name}}</div>
+                                <div style="margin: 0 4px; max-width: 120px" class="label label-success" data-toggle="tooltip" data-placement="top" title="{{task.project_branch}}">{{task.project_branch}}</div>
+                                <div class="label  label-danger">{{task.status}}</div>
+                            </div>
+
+                            <div class="alert alert-success" role="alert"
+                                 style="margin-top: 15px; float: left; width: 100%; height: 27%">
+                                <div style="float: left" data-toggle="tooltip" data-placement="left"
+                                     title="灰色为开发 红色为测试">
+                                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                                </div>
+                                <div style="margin-left: 10px; float: left;">
+                                    {% for dev in task.developers %}
+                                    <span class="badge">{{dev.username}}</span>
+                                    {% endfor %}
+                                    <br>
+                                    {% for tester in task.testers %}
+                                    <span class="badge" style="background-color: #c9302c">{{tester.username}}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info " role="alert"
+                                 style="float: left; width: 100%; height: 50%; overflow: hidden"
+                                 data-container="body" data-toggle="popover" data-placement="right"
+                                 data-content="{{task.des|safe}}">
+
+                                 {{task.desc|safe}}
+                            </div>
+
+                            <div style="float: left; width: 100%">
+                                <div style="float: left">
+                                    <span class="badge">提测{{task.test_count}}次</span>
+                                    <span class="badge">预发{{task.preview_count}}次</span>
+                                    <span class="badge">上线{{task.online_count}}次</span>
+                                </div>
+                                <div style="float: right">
+                                    <div style="float: left" title="配置脚本" data-container="body" rel-toggle="popover-left" data-placement="left" data-content="">
+                                        <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+                                    </div>
+                                    <div style="display: none">
+                                        <pre style="margin: 0; border: none; margin: -9px -15px">{{task.properties|safe}}</pre>
+                                    </div>
+
+                                    <div style="float: left; padding-left: 10px;" title="sql脚本" data-container="body" rel-toggle="popover-right" data-placement="right">
+                                        <span class="glyphicon glyphicon-tree-conifer" aria-hidden="true"></span>
+                                    </div>
+                                    <div style="display: none">
+                                        <pre  style="margin: 0; border: none; margin: -9px -15px">{{task.sql_script|safe}}</pre>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer" style="height: 40px">
+                            <div style="float: left">
+                                {% if task.status != '已上线' and task.status != '已完成' and '开发' in user.roles %}
+                                <button type="button" class="btn btn-success btn-xs" onclick="showSubmitTestModel({{task.id}})">
+                                    {% if task.status == '开发中' %}提测{% endif %}
+                                    {% if task.status != '开发中' %}重新提测{% endif %}
+                                </button>
+                                {% endif %}
+
+                                {% if task.status != '开发中' and task.status != '已上线' and task.status != '已完成' and '测试' in user.roles %}
+                                <button type="button" class="btn btn-success btn-xs" onclick="showDeployTest({{task.id}}, '{{task.title}}', '{{task.project_name}}', '{{task.project_branch}}')">发测试</button>
+                                {% endif %}
+
+                                {% if task.status == '测试中' and '测试' in user.roles %}
+                                <button type="button" class="btn btn-success btn-xs" onclick="passTest({{task.id}})">测试通过</button>
+                                {% endif %}
+
+                                {% if (task.status == '待发预发' or task.status == '预发测试中') and '运维' in user.roles %}
+                                <button type="button" class="btn btn-success btn-xs" onclick="showPerModal({{task.id}}, '{{task.project_name}}', '{{task.project_branch}}')">发预发</button>
+                                {% endif %}
+
+                                {% if task.status == '预发测试中' and '测试' in user.roles %}
+                                <button type="button" class="btn btn-success btn-xs" onclick="passPre({{task.id}})">预发通过</button>
+                                {% endif %}
+
+                                {% if task.status == '待发线上' and '运维' in user.roles %}
+                                <button type="button" class="btn btn-success btn-xs" onclick="showProdModal({{task.id}}, '{{task.project_name}}', '{{task.project_branch}}')">上线</button>
+                                {% endif %}
+
+                                {% if task.status == '已上线' and '开发' in user.roles %}
+                                <button type="button" class="btn btn-success btn-xs" onclick="mergeMaster({{task.id}})">merge master</button>
+                                {% endif %}
+
+                            </div>
+                            <div style="float: right">
+                                <a href="javascript:void (0)" id="console{{task.id}}" onclick="showConsoleModal({{task.id}}, '{{task.title}}')"><span class="glyphicon glyphicon-sound-stereo" aria-hidden="true"></span></a>
+                                <a href="/task/edit/{{task.id}}.html"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                {% else %}
+                <p>当前没有任务进行中的任务，快去创建任务吧</p>
+                {% endfor %}
+            </div>
+
+            {% include 'common/page.html' %}
+        </form>
+    </div>
+     <input type="hidden" id="currentTaskId">
+</div> <!-- /container -->
+
+
+{% include 'common/script.html' %}
+</body>
+
+<div id="submitTestModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">提测内容</h4>
+      </div>
+      <div class="modal-body">
+          <div style="padding-bottom: 5px">
+              <input type="text" class="form-control" id="tag" value="" placeholder="git tag">
+          </div>
+          <div>
+            <textarea style="width: 100%; height: 300px; border-color: #b9def0; resize: none" id="submitTestDesc" placeholder="提测说明"></textarea>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="submitTest()">提测</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="deployTestModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">发布测试</h4>
+      </div>
+      <div class="modal-body">
+          <div>
+              <p id="taskTitle"></p>
+              <p id="projectInfo"></p>
+              <p id="devBranch"></p>
+              <p><b data-toggle="tooltip" data-placement="top" title="开发分支会merge到测试分支上">测试分支：</b>unified-test</p>
+              <p><b data-toggle="tooltip" data-placement="top" title="勾选重置分支会将当前测试分支删除，然后在master分支上checkout新的测试分支">重置分支：</b><input type="checkbox" id="cleanBranch"></p>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="deployTest()">点击部署</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="deployPreModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">发布预发</h4>
+             </div>
+            <div class="modal-body">
+                <p id="preDeployDesc"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="deployPre()">点击部署</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="deployProdModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">发布线上</h4>
+             </div>
+            <div class="modal-body">
+                <p id="prodDeployDesc"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="deployProd()">点击部署</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="consoleModal" class="modal fade" tabindex="-2" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">console</h4>
+      </div>
+      <div class="modal-body" style="height: 600px; overflow: auto;">
+         <pre id="console"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    var timerRef = null;
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="popover"]').popover();
+
+        $('[rel-toggle="popover"]').each(function (i) {
+            let html = $(this).next().html();
+            $(this).popover({
+                html: true,
+                content: html,
+                placement: i + 1 % 3 == 0 ? 'left' : 'right'
+            });
+        });
+
+        $('[rel-toggle="popover-left"]').each(function (i) {
+             let html = $(this).next().html();
+             $(this).popover({
+                 html: true,
+                 content: html,
+                 placement: 'left'
+            });
+        });
+
+        $('[rel-toggle="popover-right"]').each(function (i) {
+             let html = $(this).next().html();
+             $(this).popover({
+                html: true,
+                content: html,
+                 placement: 'right'
+            });
+        });
+
+        $("#consoleModal").on('shown.bs.modal', (e) => {
+            timerRef = setInterval(function () {
+                getJenkinsConsole();
+            }, 3000)
+        })
+
+        $("#consoleModal").on('hidden.bs.modal', (e) => {
+            clearInterval(timerRef);
+            window.location.reload();
+        })
+    })
+    
+    function showSubmitTestModel(taskId) {
+        $("#currentTaskId").val(taskId);
+        $("#submitTestModal").modal();
+    }
+    
+    function submitTest() {
+        let taskId = $("#currentTaskId").val();
+        let desc = $("#submitTestDesc").val();
+        let tag = $("#tag").val();
+
+        if (tag == null || tag == ''){
+            alert('git tag必填');
+            return
+        }
+
+        if (desc == null || desc == '') {
+            alert("提测说明必填");
+            return;
+        }
+        
+        $.ajax({
+            url: '/task/submittest.html',
+            method: 'POST',
+            data: {'id': taskId, 'desc': desc, 'tag': tag},
+            success: (d) => {
+                d = JSON.parse(d);
+                if (d.ok){
+                    window.location.reload();
+                } else {
+                    alert(d.msg)
+                }
+            }
+        });
+    }
+
+    function showDeployTest(taskId, taskTitle, projectName, devBranch) {
+        $("#currentTaskId").val(taskId);
+        $("#taskTitle").html('<b>任务标题：</b>' + taskTitle);
+        $("#projectInfo").html('<b>发布项目：</b>' + projectName);
+        $("#devBranch").html('<b>开发分支：</b>' + devBranch);
+
+        $("#deployTestModal").modal();
+    }
+    
+    function deployTest() {
+        let taskId = $("#currentTaskId").val();
+        let cleanBranch = $("#cleanBranch").is(':checked');
+
+        $.ajax({
+            url: '/task/test/deploy.html',
+            method: 'POST',
+            data: {'id': taskId, 'cleanBranch': cleanBranch},
+            success: (d) => {
+                d = JSON.parse(d)
+                if (d.ok) {
+                     $("#deployTestModal").modal('hide');
+                     $("#consoleModal").modal();
+                     // $("#console" + taskId).click();
+                } else {
+                    alert(d.msg)
+                }
+            }
+        });
+    }
+    
+    function showConsoleModal(taskId, taskTitle) {
+        $("#currentTaskId").val(taskId);
+        $("#consoleModal").modal();
+    }
+    
+    function getJenkinsConsole() {
+        console.info("获取jenkins console...")
+        let taskId = $("#currentTaskId").val();
+        $.ajax({
+            url: '/task/'+ taskId +'/deploy/console.html',
+            method: 'get',
+            success: (d) => {
+                d = JSON.parse(d);
+                $("#console").html(d.console)
+            }
+        })
+    }
+
+    function passTest(taskId) {
+        $.ajax({
+            url: '/task/' + taskId + '/test/pass.html',
+            method: 'post',
+            success: (d) => {
+                window.location.reload();
+            }
+        })
+    }
+    
+    function showPerModal(taskId, projectName, branch) {
+        $("#currentTaskId").val(taskId);
+        $("#preDeployDesc").html('确定部署【 '+ projectName +' 】【' + branch + '】到预发环境吗');
+        $("#deployPreModal").modal();
+    }
+
+    function deployPre() {
+        let taskId = $("#currentTaskId").val();
+
+        $.ajax({
+            url: '/task/pre/deploy.html',
+            method: 'POST',
+            data: {'id': taskId},
+            success: (d) => {
+                d = JSON.parse(d)
+                if (d.ok) {
+                     $("#deployPreModal").modal('hide');
+                     $("#consoleModal").modal();
+                } else {
+                    alert(d.msg)
+                }
+            }
+        });
+    }
+
+    function passPre(taskId) {
+        $.ajax({
+            url: '/task/' + taskId + '/pre/pass.html',
+            method: 'post',
+            success: (d) => {
+                window.location.reload();
+            }
+        })
+    }
+
+    function showProdModal(taskId, projectName, branch) {
+        $("#currentTaskId").val(taskId);
+        $("#prodDeployDesc").html('确定部署【 '+ projectName +' 】【' + branch + '】到线上环境吗');
+        $("#deployProdModal").modal();
+    }
+
+    function deployProd() {
+        let taskId = $("#currentTaskId").val();
+
+        $.ajax({
+            url: '/task/prod/deploy.html',
+            method: 'POST',
+            data: {'id': taskId},
+            success: (d) => {
+                d = JSON.parse(d)
+                if (d.ok) {
+                     $("#deployProdModal").modal('hide');
+                     $("#consoleModal").modal();
+                } else {
+                    alert(d.msg)
+                }
+            }
+        });
+    }
+
+    function reqAjax(url) {
+        $.ajax({
+            url: '/task/pipeline/input',
+            method: 'post',
+            data: {'url': url},
+            success: (d) => {
+                console.info('reqAjax resp:' + d)
+            }
+        })
+    }
+    
+    function mergeMaster(taskId) {
+        $.ajax({
+            url: '/task/'+ taskId +'/merge/master',
+            method: 'post',
+            success: (d) => {
+                 window.location.reload();
+            }
+        })
+    }
+</script>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  {% include 'common/head.html' %}
+
+  <body>
+
+    {% include 'common/navbar.html' %}
+
+    <div class="container">
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+          <p>jenkins配置</p>
+          <form method="post" action="/jenkins/manage.html" class="form-horizontal">
+
+              <div class="form-group">
+                  <label class="col-sm-1 control-label">地址</label>
+                  <div class="col-sm-11">
+                      <input type="text" class="form-control" name="jenkinsUrl" value="{% if jenkins_url %}{{jenkins_url}}{% endif %}" required>
+                  </div>
+              </div>
+
+               <div class="form-group">
+                  <label class="col-sm-1 control-label">用户</label>
+                  <div class="col-sm-11">
+                      <input type="text" class="form-control" name="jenkinsUser" value="{% if jenkins_user %}{{jenkins_user}}{% endif %}" required>
+                  </div>
+              </div>
+
+             <div class="form-group">
+                  <label class="col-sm-1 control-label">令牌</label>
+                  <div class="col-sm-11">
+                      <input type="text" class="form-control" name="jenkinsToken" value="{% if jenkins_token %}{{jenkins_token}}{% endif %}" required>
+                  </div>
+              </div>
+
+              <div class="col-sm-1"></div>
+              <div class="col-sm-11">
+                <button type="button" class="btn btn-primary" onclick="testConnect()">测试连接</button>
+                <button type="submit" class="btn btn-primary">提交</button>
+              </div>
+          </form>
+      </div>
+
+        {% if msg %}
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Warning!</strong> {{msg}}
+        </div>
+        {% endif %}
+    </div>
+
+
+    {% include 'common/script.html' %}
+  
+    <script>
+        
+        function testConnect() {
+            let jenkinsUrl = $("input[name='jenkinsUrl']").val();
+            let jenkinsUser = $("input[name='jenkinsUser']").val();
+            let jenkinsToken = $("input[name='jenkinsToken']").val();
+            window.location.href='/jenkins/testcon?jenkinsUrl=' + jenkinsUrl + '&jenkinsToken=' + jenkinsToken + '&jenkinsUser=' + jenkinsUser
+        }
+        
+    </script>
+  </body>
+</html>

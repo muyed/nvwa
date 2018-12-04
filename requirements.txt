@@ -1,0 +1,9 @@
+flask==1.0.2
+gunicorn
+sqlalchemy
+mysql-connector
+redis-py-cluster
+redis
+javaobj-py3
+python-gitlab
+python-jenkins

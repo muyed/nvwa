@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  {% include 'common/head.html' %}
+
+  <body>
+
+    {% include 'common/navbar.html' %}
+
+    <div class="container">
+        {% if msg %}
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Warning!</strong> {{msg}}
+        </div>
+        {% endif %}
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+          <p>创建任务</p>
+          <form method="post" action="/task/add.html" class="form-horizontal">
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">标题</label>
+                  <div class="col-sm-8">
+                      <input type="text" class="form-control" name="title" value="{{task.title or ''}}" required>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">项目</label>
+                  <div class="col-sm-8">
+                      <select class="selectpicker" data-size="10" onchange="changeProjectGroup(this)" required>
+                          <option value="">选择项目组</option>
+                          {% for group in task.groups %}
+                           <option value="{{group.id}}">{{group.name}}</option>
+                          {% endfor %}
+                      </select> /
+                      <select class="selectpicker" data-size="10" name="project_id" required>
+                          <option value="">选择项目</option>
+                      </select>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">分支</label>
+                  <div class="col-sm-8">
+                      <div class="input-group">
+                          <input type="text" class="form-control" id="branchPre" value="{{task.branch_pre}}" required>
+                          <div class="input-group-addon" id="branchSuf">{{task.branch_suf}}</div>
+                          <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" onclick="testBranch()">是否可用</button>
+                          </span>
+                          <input type="hidden" name="project_branch">
+                      </div>
+
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">开发</label>
+                  <div class="col-sm-8">
+                      <select class="selectpicker form-control" id="developers" data-size="10" multiple data-selected-text-format="count > 3" required>
+                          {% for dev in task.developers %}
+                           <option value="{{dev.username}}">{{dev.username}}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                  <input type="hidden" name="developers">
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">测试</label>
+                  <div class="col-sm-8">
+                      <select name="role" class="selectpicker form-control" id="testers" data-size="10" multiple data-selected-text-format="count > 3" required>
+                          {% for tester in task.testers %}
+                           <option value="{{tester.username}}">{{tester.username}}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                  <input type="hidden" name="testers">
+              </div>
+
+               <div class="form-group">
+                  <label class="col-sm-2 control-label">需求描述</label>
+                  <div class="col-sm-8">
+                      <textarea name="discription" class="form-control" rows="5" required style="resize:none">{{task.discription or ''}}</textarea>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">配置项</label>
+                  <div class="col-sm-8">
+                      <textarea name="properties" class="form-control" rows="5" style="resize:none" >{{task.properties or ''}}</textarea>
+                  </div>
+              </div>
+
+               <div class="form-group">
+                  <label class="col-sm-2 control-label">sql脚本</label>
+                  <div class="col-sm-8">
+                      <textarea name="sql_script" class="form-control" rows="5" style="resize:none">{{task.sql_script or ''}}</textarea>
+                  </div>
+              </div>
+
+               <div class="form-group">
+                   <div class="col-sm-offset-2 col-sm-8">
+                        <button type="button" onclick="_submit()" class="btn btn-primary">提交</button>
+                       <input style="display: none;" type="submit" id="sub" value="submit" />
+                   </div>
+               </div>
+          </form>
+      </div>
+
+    </div>
+
+
+    <div id="testBranchModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">分支是否可用</h4>
+                </div>
+                <div class="modal-body">
+                    <p>分支【<b id="_branchName"></b>】<b id="_testResult"></b></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'common/script.html' %}
+  
+    <script>
+        $(function () {
+            $("select[name='role']").selectpicker();
+        })
+        
+        function changeProjectGroup(obj) {
+            $.ajax({
+                url: '/gitlab/projects/' + $(obj).val(),
+                method: 'get',
+                success: (data) => {
+                    data = JSON.parse(data)
+                    console.log(data.length)
+                    console.log(data)
+                    $("select[name='project_id']").children().not(":eq(0)").remove();
+                    data.forEach(v => $("select[name='project_id']").append("<option value='"+ v.id +"'>"+ v.name +"</option>"));
+                    $("select[name='project_id']").selectpicker('refresh')
+                }
+            })
+        }
+
+        function testBranch() {
+            let projectId = $("select[name='project_id']").val();
+            let branch = $("#branchPre").val();
+
+            if (projectId == null || branch == null || projectId == '' || branch == '') {
+
+                $("#_branchName").html(branch + $("#branchSuf").html());
+                $("#_testResult").html('不可用');
+                $("#testBranchModal").modal();
+                return;
+            }
+
+            branch = branch + $("#branchSuf").html();
+
+            $.ajax({
+                url: '/gitlab/branch/exist/'+ branch +'/' + projectId,
+                method: 'get',
+                success: (data) => {
+                     $("#_branchName").html(branch);
+                     $("#_testResult").html(JSON.parse(data) ? '可用' : '不可用');
+                      $("#testBranchModal").modal();
+                }
+            });
+        }
+        
+        function _submit() {
+            $("input[name='project_branch']").val($("#branchPre").val() + $("#branchSuf").html());
+            $("input[name='developers']").val($("#developers").val());
+            $("input[name='testers']").val($("#testers").val());
+            $("#sub").click();
+        }
+    </script>
+  </body>
+</html>
