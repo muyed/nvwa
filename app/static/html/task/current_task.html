@@ -276,7 +276,7 @@
                                 </button>
                                 {% endif %}
 
-                                {% if task.status != '开发中' and task.status != '已上线' and task.status != '已完成' and '测试' in user.roles %}
+                                {% if task.status != '开发中' and task.status != '已上线' and task.status != '已完成' and ('测试' in user.roles or '开发' in user.roles) %}
                                 <button type="button" class="btn btn-success btn-xs" onclick="showDeployTest({{task.id}}, '{{task.title}}', '{{task.project_name}}', '{{task.project_branch}}')">发测试</button>
                                 {% endif %}
 
@@ -284,12 +284,12 @@
                                 <button type="button" class="btn btn-success btn-xs" onclick="passTest({{task.id}})">测试通过</button>
                                 {% endif %}
 
-                                {% if (task.status == '待发预发' or task.status == '预发测试中') and '运维' in user.roles %}
+                                {% if (task.status == '待发预发' or task.status == '预发测试中') and ('开发' in user.roles or '测试' in user.roles) %}
                                 <button type="button" class="btn btn-success btn-xs" onclick="showPerModal({{task.id}}, '{{task.project_name}}', '{{task.project_branch}}')">发预发</button>
                                 {% endif %}
 
                                 {% if task.status == '预发测试中' and '测试' in user.roles %}
-                                <button type="button" class="btn btn-success btn-xs" onclick="passPre({{task.id}})">预发通过</button>
+                                <button type="button" class="btn btn-success btn-xs" onclick="passPre({{task.id}})">申请上线</button>
                                 {% endif %}
 
                                 {% if task.status == '待发线上' and '运维' in user.roles %}

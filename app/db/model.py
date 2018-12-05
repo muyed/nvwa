@@ -85,3 +85,11 @@ class ProjectConfig(Base, BaseModel):
     test_job = Column(String(128))
     pre_job = Column(String(128))
     pro_job = Column(String(128))
+
+
+class AppInfo(Base, BaseModel):
+    __tablename__ = 'app_info'
+    app_name = Column(String(128))
+    app_desc = Column(String(512))
+    url = Column(String(512))
+    env = Column(Integer())

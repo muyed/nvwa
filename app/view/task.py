@@ -299,7 +299,7 @@ def submit_test():
 
 
 @app.route('/task/test/deploy.html', methods=['POST'])
-@auth(['测试'])
+@auth(['测试', '开发'])
 def test_deploy():
     task = task_service.get_by_id(int(request.form.to_dict()['id']))
     project_config = project_config_service.get_by_project(task.project_id)
@@ -406,7 +406,7 @@ def pass_test(id):
 
 
 @app.route('/task/pre/deploy.html', methods=['POST'])
-@auth(['运维'])
+@auth(['运维', '测试', '开发'])
 def pre_deploy():
     task = task_service.get_by_id(int(request.form.to_dict()['id']))
     project_config = project_config_service.get_by_project(task.project_id)

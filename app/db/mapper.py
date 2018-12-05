@@ -183,4 +183,7 @@ class ProjectConfigService(BaseService):
         return result
 
 
+class AppInfoService(BaseService):
+    def __init__(self):
+        super(AppInfoService, self).__init__(AppInfo)
 
