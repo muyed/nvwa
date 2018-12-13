@@ -430,6 +430,8 @@ def pre_deploy():
     finally:
         mr.delete()
 
+    dingtalk_util.send_deploy_msg(task.project_name, '预发环境')
+
     try:
         jk = jenkins.get_jk()
         jk.build_job(project_config.pre_job, {'branch': task.project_branch})
@@ -488,6 +490,8 @@ def prod_deploy():
         return json.dumps({'ok': False, 'msg': 'merge代码失败，请联系开发解决冲突后再重试'})
     finally:
         mr.delete()
+
+    dingtalk_util.send_deploy_msg(task.project_name, '线上环境')
 
     try:
         jk = jenkins.get_jk()
