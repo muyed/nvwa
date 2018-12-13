@@ -3,6 +3,7 @@ import app.view.gitlab as gitlab
 import app.view.jenkins as jenkins
 import json
 import requests
+from ..util import dingtalk_util
 
 
 task_service = TaskService()
@@ -116,7 +117,7 @@ def task_query():
 
     query = request.args.to_dict()
     for k in list(query):
-        if not query[k]:
+        if not query[k] or k == 'current':
             query.pop(k)
 
     tasks = task_service.query_list(query, page)
@@ -346,6 +347,8 @@ def test_deploy():
     finally:
         dev_branch.delete()
         mr.delete()
+
+    dingtalk_util.send_deploy_msg(task.project_name, '测试环境')
 
     try:
         jk = jenkins.get_jk()
