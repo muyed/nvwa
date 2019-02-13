@@ -16,6 +16,6 @@ def send_deploy_msg(project, env):
 
     headers = {'Content-Type': 'application/json;charset=UTF-8'}
 
-    requests.post(url=url, headers=headers, data=json.dumps(body))
+    #requests.post(url=url, headers=headers, data=json.dumps(body))
 
 
