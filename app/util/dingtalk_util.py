@@ -5,7 +5,7 @@ import json
 
 def send_deploy_msg(project, env):
     url = 'https://oapi.dingtalk.com/robot/send?' \
-          'access_token=bf9f34210af450667c156d84ef79b931ea07eb6b139be87fa445848009fb5b0d'
+          'access_token=a2e8a14bbc0b7018f2c3b5dab2ce90ddffdc2cae485aa708edea2ebe7057bb26'
 
     body = {
         'msgtype': 'text',
@@ -16,6 +16,6 @@ def send_deploy_msg(project, env):
 
     headers = {'Content-Type': 'application/json;charset=UTF-8'}
 
-    #requests.post(url=url, headers=headers, data=json.dumps(body))
+    requests.post(url=url, headers=headers, data=json.dumps(body))
 
 
