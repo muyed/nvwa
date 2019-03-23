@@ -1,6 +1,6 @@
 flask==1.0.2
 gunicorn
-sqlalchemy
+sqlalchemy==1.2.11
 mysql-connector
 redis-py-cluster
 redis
