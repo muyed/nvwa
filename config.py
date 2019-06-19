@@ -22,7 +22,7 @@ class Config(object):
 
 
 class LocalConfig(Config):
-    DB_URL = 'mysql+mysqlconnector://sntuic:1qaz!QAZ@snt-daily-pub.mysql.rds.aliyuncs.com:3306/nvwa'
+    DB_URL = 'mysql+mysqlconnector://sntuic:1qaz!QAZ@snt-test-pub.mysql.rds.aliyuncs.com:3306/nvwa'
     REDIS_CONFIG = {'host': '47.99.215.186', 'port': 6379, 'password': '3edc#EDC'}
     LOGIN_URL = 'http://uic-daily.3songshu.com/login'
 

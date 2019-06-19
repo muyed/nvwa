@@ -4,6 +4,6 @@ sqlalchemy==1.2.11
 mysql-connector
 redis-py-cluster
 redis
-javaobj-py3
+javaobj-py3==0.2.4
 python-gitlab
 python-jenkins
