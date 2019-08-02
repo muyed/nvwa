@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  {% include 'common/head.html' %}
+
+  <body>
+
+    {% include 'common/navbar.html' %}
+
+    <div class="container">
+        {% if msg %}
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Warning!</strong> {{msg}}
+        </div>
+        {% endif %}
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+          <form method="get" action="/sql/approval/list.html">
+              <div class="row">
+                  <div class="col-lg-5">
+                      <div class="input-group">
+                          <span class="input-group-addon" id="sizing-addon2">title</span>
+                          <input type="text" class="form-control" name="title" value="{{query.title}}" aria-describedby="sizing-addon2">
+                      </div>
+                  </div>
+                  <div class="col-lg-5">
+                      <div class="input-group">
+                          <span class="input-group-addon" id="sizing-addon2">审核状态</span>
+                          <select class="selectpicker" data-size="10" name="status">
+                              <option>选择审核状态</option>
+                              <option value="0" {% if query.status=='0' %}selected{% endif %}>待审核</option>
+                              <option value="1" {% if query.status=='1' %}selected{% endif %}>审核通过</option>
+                              <option value="2" {% if query.status=='2' %}selected{% endif %}>审核不通过</option>
+                              <option value="3" {% if query.status=='3' %}selected{% endif %}>已执行</option>
+                          </select>
+                      </div>
+                  </div>
+
+                  <div class="col-lg-2">
+                      <button type="submit" class="btn btn-default">查询</button>
+                      <a href="/sql/approval/add.html">
+                          <button type="button" class="btn btn-default">发起审核</button>
+                      </a>
+                  </div>
+              </div>
+              <br>
+
+              <table data-toggle="table">
+                  <thead>
+                  <tr>
+                      <th>title</th>
+                      <th>发起人</th>
+                      <th>审批人</th>
+                      <th>执行人</th>
+                      <th>状态</th>
+                      <th>发起时间</th>
+                      <th>更新时间</th>
+                      <th>
+                          操作
+                      </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for approval in approvals %}
+                  <tr>
+                      <td>{{approval.title}}</td>
+                      <td>{{approval.promoter}}</td>
+                      <td>{{approval.approver}}</td>
+                      <td>{{approval.executor}}</td>
+                      <td>
+                          {% if approval.status==0 %}待审核{% endif %}
+                          {% if approval.status==1 %}审核通过{% endif %}
+                          {% if approval.status==2 %}审核不通过{% endif %}
+                          {% if approval.status==3 %}已执行{% endif %}
+                      </td>
+                      <td>{{approval.gmt_create}}</td>
+                      <td>{{approval.gmt_modified}}</td>
+                      <td>
+                          {% if approval.status != 3 and approval.promoter == user.username %}
+                          <a href="javascript:void (0)" onclick="showDel({{approval.id}})">取消</a>
+                          {% endif %}
+
+                          {% if (approval.status == 0 or approval.status == 2) and approval.promoter == user.username %}
+                          <a href="/sql/approval/update/{{approval.id}}.html">编辑</a>
+                          {% endif %}
+
+                          {% if approval.status==0 and approval.approver == user.username %}
+                          <a href="/sql/approval/{{approval.id}}.html">审批</a>
+                          {% endif %}
+
+                          <a href="/sql/approval/detail/{{approval.id}}.html">详情</a>
+                      </td>
+                  </tr>
+                  {% endfor %}
+                  </tbody>
+              </table>
+              {% include 'common/page.html' %}
+          </form>
+      </div>
+
+    </div>
+
+
+    <div id="delModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">取消发起审核</h4>
+                </div>
+                <div class="modal-body">
+                    <p>确定要删除id为【<b id="delId"></b>】的SQL审核吗</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="del()">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% include 'common/script.html' %}
+
+    <script>
+        function showDel(id) {
+            $("#delId").html(id);
+            $("#delModal").modal();
+        }
+
+        function del() {
+            window.location.href = '/sql/approval/del/' + $('#delId').html() + '.html'
+        }
+    </script>
+  </body>
+</html>

@@ -187,3 +187,32 @@ class AppInfoService(BaseService):
     def __init__(self):
         super(AppInfoService, self).__init__(AppInfo)
 
+
+class SqlApprovalService(BaseService):
+    def __init__(self):
+        super(SqlApprovalService, self).__init__(SqlApproval)
+
+    def my_list(self, query, page={'current': 1}):
+        if 'current' not in page or page['current'] < 1:
+            page['current'] = 1
+        if 'size' not in page:
+            page['size'] = 20
+
+        query['row_status'] = 0
+        offset = (page['current'] - 1) * page['size']
+
+        username = g.user['username']
+        conditions = [SqlApproval.promoter == username, SqlApproval.approver == username, SqlApproval.executor == username]
+
+        result = g.db.query(self.table_cls).filter(or_(*conditions)).filter_by(**query).order_by('-id').offset(offset)\
+            .limit(page['size'])
+
+        if not result:
+            page['total'] = 0
+            return []
+        page['total'] = int(math.ceil(g.db.query(self.table_cls).filter(or_(*conditions)).filter_by(**query)
+                                      .count() / page['size']))
+
+        return [create_model(self.table_cls, r.to_dict(True)) for r in list(result)]
+
+

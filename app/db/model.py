@@ -93,3 +93,15 @@ class AppInfo(Base, BaseModel):
     app_desc = Column(String(512))
     url = Column(String(512))
     env = Column(Integer())
+
+
+class SqlApproval(Base, BaseModel):
+    __tablename__ = 'sql_approval'
+    title = Column(String(256))
+    sql = Column(Text())
+    cause = Column(String(1024))
+    promoter = Column(String(45))
+    approver = Column(String(45))
+    executor = Column(String(45))
+    status = Column(Integer())
+    approval_opinion = Column(String(1024))

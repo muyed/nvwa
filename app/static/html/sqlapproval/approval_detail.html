@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  {% include 'common/head.html' %}
+
+  <body>
+
+    {% include 'common/navbar.html' %}
+
+    <div class="container">
+        {% if msg %}
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Warning!</strong> {{msg}}
+        </div>
+        {% endif %}
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+          <p>编辑SQL审核</p>
+          <form method="post" action="" class="form-horizontal">
+              <input name="id" value="{{approval.id}}" hidden/>
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">标题</label>
+                  <div class="col-sm-8">
+                      <input type="text" class="form-control" name="title" value="{{approval.title or ''}}" disabled>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">发起人</label>
+                  <div class="col-sm-8">
+                      <input type="text" class="form-control"  value="{{approval.promoter or ''}}" disabled>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">SQL执行原因</label>
+                  <div class="col-sm-8">
+                      <textarea name="cause" class="form-control" rows="3" disabled style="resize:none">{{approval.cause or ''}}</textarea>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">SQL脚本</label>
+                  <div class="col-sm-8">
+                      <textarea name="sql" class="form-control" rows="15" readonly style="resize:none">{{approval.sql or ''}}</textarea>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">审批人</label>
+                  <div class="col-sm-8">
+                      <input type="text" class="form-control"  value="{{approval.approver or ''}}" disabled>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">审批意见</label>
+                  <div class="col-sm-8">
+                      <textarea  class="form-control" rows="3" disabled style="resize:none">{{approval.approval_opinion or ''}}</textarea>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">执行人</label>
+                  <div class="col-sm-8">
+                      <input type="text" class="form-control"  value="{{approval.executor or ''}}" disabled>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-sm-2 control-label">当前状态</label>
+                  <div class="col-sm-8">
+                      <select class="selectpicker form-control" name="status" data-size="10" data-selected-text-format="count > 3" disabled>
+                          <option value="0" {% if approval.status==0 %}selected{% endif %}>待审核</option>
+                          <option value="1" {% if approval.status==1 %}selected{% endif %}>审核已通过</option>
+                          <option value="2" {% if approval.status==2 %}selected{% endif %}>审核被驳回</option>
+                          <option value="3" {% if approval.status==3 %}selected{% endif %}>已执行上线</option>
+                      </select>
+                  </div>
+              </div>
+
+               <div class="form-group">
+                   <div class="col-sm-offset-2 col-sm-8">
+                       {% if approval.status==1 and approval.executor == user.username %}
+                        <button id="exec" type="button" class="btn btn-primary" onclick="showExec({{approval.id}})">已上线执行</button>
+                       {% endif %}
+                   </div>
+               </div>
+          </form>
+      </div>
+
+    </div>
+
+    <div id="execModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">sql线上执行状态同步</h4>
+                </div>
+                <div class="modal-body">
+                    <p>确定将id为【<b id="execId"></b>】的状态更新成已执行吗</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="exec()">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'common/script.html' %}
+  
+    <script>
+        function showExec(id) {
+            $("#execId").html(id);
+            $("#execModal").modal();
+        }
+        
+        function exec() {
+            window.location.href = '/sql/approval/exec/' + $('#execId').html() + '.html'
+        }
+    </script>
+  </body>
+</html>

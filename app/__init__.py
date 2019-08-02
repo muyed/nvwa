@@ -25,7 +25,7 @@ else:
                         password=config.REDIS_CONFIG['password'], socket_timeout=2)
 
 
-Session = sessionmaker(bind=create_engine(config.DB_URL, echo=False))
+Session = sessionmaker(bind=create_engine(config.DB_URL, echo=True))
 
 
 @app.before_request
@@ -69,4 +69,4 @@ class JavaToJSONEncoder(json.JSONEncoder):
         return super(JavaToJSONEncoder, self).default(obj)
 
 
-from app.view import index, login, role, gitlab, jenkins, task
+from app.view import index, login, role, gitlab, jenkins, task, sql_approval
