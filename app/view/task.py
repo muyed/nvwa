@@ -476,6 +476,8 @@ def prod_deploy():
     project_config = project_config_service.get_by_project(task.project_id)
     if not project_config:
         return json.dumps({'ok': False, 'msg': '项目还未配置部署配置，请联系管理员添加'})
+    if getattr(project_config, 'is_seal') == 1:
+        return json.dumps({'ok': False, 'msg': '该项目目前处于禁止发布阶段'})
 
     project = gitlab.project_by_id(task.project_id)
 

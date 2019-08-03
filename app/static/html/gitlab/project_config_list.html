@@ -32,6 +32,7 @@
                       <th>测试job</th>
                       <th>预发job</th>
                       <th>上线job</th>
+                      <th>是否禁止上线</th>
                       <th>
                           操作
                           <a href="/gitlab/project/config/add.html">增加</a>
@@ -46,6 +47,10 @@
                       <td>{{config.test_job}}</td>
                       <td>{{config.pre_job}}</td>
                       <td>{{config.pro_job}}</td>
+                      <td>
+                          {% if config.is_seal == 0 %}否{% endif %}
+                          {% if config.is_seal == 1 %}是{% endif %}
+                      </td>
                       <td>
                           <a href="/gitlab/project/config/edit/{{config.id}}.html">编辑</a>
                           <a href="javascript:void (0)" onclick="showDel({{config.id}})">删除</a>

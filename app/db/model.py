@@ -88,6 +88,7 @@ class ProjectConfig(Base, BaseModel):
     test_job = Column(String(128))
     pre_job = Column(String(128))
     pro_job = Column(String(128))
+    is_seal = Column(Integer())
 
 
 class AppInfo(Base, BaseModel):
