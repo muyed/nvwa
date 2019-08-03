@@ -1,9 +1,9 @@
 flask==1.0.2
-gunicorn
+gunicorn==19.9.0
 sqlalchemy==1.2.11
-mysql-connector
-redis-py-cluster
-redis
+mysql-connector==2.2.9
+redis-py-cluster=1.3.6
+redis==2.10.6
 javaobj-py3==0.2.4
-python-gitlab
-python-jenkins
+python-gitlab==1.9.0
+python-jenkins==1.4.0
