@@ -40,6 +40,9 @@ class Role(Base, BaseModel):
     __tablename__ = 'role'
     username = Column(String(50))
     role = Column(String(50))
+    is_manager = Column(Integer())
+    is_owner = Column(Integer())
+    email = Column(String())
 
 
 class SysConfig(Base, BaseModel):

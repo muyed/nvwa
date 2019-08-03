@@ -16,19 +16,19 @@
 
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
-          <p>新增员工角色</p>
-          <form method="post" action="/role/add.html" class="form-horizontal">
-
+          <p>编辑员工角色</p>
+          <form method="post" action="/role/update.html" class="form-horizontal">
+            <input name="id" value="{{role.id}}" hidden/>
               <div class="form-group">
-                  <label class="col-sm-1 control-label">鼠名</label>
-                  <div class="col-sm-11">
+                  <label class="col-sm-2 control-label">鼠名</label>
+                  <div class="col-sm-10">
                       <input type="text" class="form-control" name="username" value="{{role.username}}" required>
                   </div>
               </div>
 
               <div class="form-group">
-                  <label class="col-sm-1 control-label">角色</label>
-                  <div class="col-sm-11">
+                  <label class="col-sm-2 control-label">角色</label>
+                  <div class="col-sm-10">
                       <select name="role" class="form-control">
                           <option value="开发" {% if role.role=='开发' %}selected{% endif %}>开发</option>
                           <option value="测试" {% if role.role=='测试' %}selected{% endif %}>测试</option>
@@ -39,8 +39,8 @@
               </div>
 
               <div class="form-group">
-                  <label class="col-sm-1 control-label">是否负责人</label>
-                  <div class="col-sm-11">
+                  <label class="col-sm-2 control-label">是否负责人</label>
+                  <div class="col-sm-10">
                       <select name="is_manager" class="form-control">
                           <option value="0" {% if role.is_manager=='0' %}selected{% endif %}>否</option>
                           <option value="1" {% if role.is_manager=='1' %}selected{% endif %}>是</option>
@@ -49,8 +49,8 @@
               </div>
 
               <div class="form-group">
-                  <label class="col-sm-1 control-label">是否owner</label>
-                  <div class="col-sm-11">
+                  <label class="col-sm-2 control-label">是否owner</label>
+                  <div class="col-sm-10">
                       <select name="is_owner" class="form-control">
                           <option value="0" {% if role.is_owner=='0' %}selected{% endif %}>否</option>
                           <option value="1" {% if role.is_owner=='1' %}selected{% endif %}>是</option>
@@ -59,8 +59,8 @@
               </div>
 
               <div class="form-group">
-                  <label class="col-sm-1 control-label">邮箱</label>
-                  <div class="col-sm-11">
+                  <label class="col-sm-2 control-label">邮箱</label>
+                  <div class="col-sm-10">
                       <input type="text" class="form-control" name="email" value="{{role.email}}" required>
                   </div>
               </div>

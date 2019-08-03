@@ -69,8 +69,9 @@
                   <div class="col-sm-8">
                       <select class="selectpicker form-control" name="executor" data-size="10" data-selected-text-format="count > 3">
                           <option value="">选择执行人</option>
-                          <option value="鼠大憨" {% if approval.executor=='鼠大憨' %}selected{% endif %}>鼠大憨</option>
-                          <option value="鼠子曰" {% if approval.executor=='鼠稻米' %}selected{% endif %}>鼠稻米</option>
+                          {% for o in owner %}
+                          <option value="{{o.username}}" {% if approval.executor==o.username %}selected{% endif %}>{{o.username}}</option>
+                          {% endfor %}
                       </select>
                   </div>
               </div>

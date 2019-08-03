@@ -1,4 +1,5 @@
 from .login import *
+from ..util.email_util import send
 
 sql_approval_service = SqlApprovalService()
 
@@ -26,7 +27,9 @@ def approval_list():
 @app.route('/sql/approval/add.html', methods=['GET'])
 @auth(['开发', '测试', '运维'])
 def to_approval_add():
-    return render_template('sqlapproval/approval_add.html', user=g.user, approval={})
+    managers = role_service.query_list({'role': '开发', 'is_manager': 1}, {'size': 2000})
+
+    return render_template('sqlapproval/approval_add.html', user=g.user, approval={}, managers=managers)
 
 
 @app.route('/sql/approval/add.html', methods=['POST'])
@@ -39,12 +42,32 @@ def approval_add():
             or not getattr(approval, 'sql', None) or not getattr(approval, 'cause', None):
         msg = '标题、SQL脚本、发起原因、审批人必填，请填写完整'
     if msg:
-        return render_template('sqlapproval/approval_add.html', user=g.user, approval=approval, msg=msg)
+        managers = role_service.query_list({'role': '开发', 'is_manager': 1}, {'size': 2000})
+        return render_template('sqlapproval/approval_add.html', user=g.user, approval=approval, msg=msg,
+                               managers=managers)
 
     setattr(approval, 'status', 0)
     setattr(approval, 'promoter', g.user['username'])
 
     sql_approval_service.add(approval)
+
+    subject = '【线上SQL执行申请】%s' % getattr(approval, 'title')
+    body = '''
+        发起人：%s
+        
+        线上SQL执行原因：
+            %s
+        
+        执行SQL脚本为：
+            %s
+        
+        请 %s 审核脚本 并指定执行人
+    ''' % (getattr(approval, 'promoter'), getattr(approval, 'cause'), getattr(approval, 'sql'),
+           getattr(approval, 'approver'))
+
+    manager = role_service.query_list({'username': getattr(approval, 'approver')})[0]
+
+    send(subject, body, [getattr(manager, 'email')], ['yunzaocenter@3songshu.com'])
 
     return redirect('/sql/approval/list.html')
 
@@ -53,7 +76,8 @@ def approval_add():
 @auth(['开发', '测试', '运维'])
 def to_approval_update(id):
     approval = sql_approval_service.get_by_id(id)
-    return render_template('sqlapproval/approval_update.html', user=g.user, approval=approval)
+    managers = role_service.query_list({'role': '开发', 'is_manager': 1}, {'size': 2000})
+    return render_template('sqlapproval/approval_update.html', user=g.user, approval=approval, managers=managers)
 
 
 @app.route('/sql/approval/update.html', methods=['POST'])
@@ -67,7 +91,9 @@ def approval_update():
         msg = '标题、SQL脚本、发起原因、审批人必填，请填写完整'
 
     if msg:
-        return render_template('sqlapproval/approval_update.html', user=g.user, approval=approval, msg=msg)
+        managers = role_service.query_list({'role': '开发', 'is_manager': 1}, {'size': 2000})
+        return render_template('sqlapproval/approval_update.html', user=g.user, approval=approval, msg=msg,
+                               managers=managers)
 
     old = sql_approval_service.get_by_id(getattr(approval, 'id'))
 
@@ -76,11 +102,29 @@ def approval_update():
     if msg:
         return render_template('sqlapproval/approval_update.html', user=g.user, approval=approval, msg=msg)
 
-
     setattr(approval, 'status', 0)
     setattr(approval, 'promoter', g.user['username'])
 
     sql_approval_service.update(approval)
+
+    subject = '【线上SQL执行申请】%s' % getattr(approval, 'title')
+    body = '''
+            发起人：%s
+
+            线上SQL执行原因：
+                %s
+
+            执行SQL脚本为：
+                %s
+
+            请 %s 审核脚本 并指定执行人
+        ''' % (getattr(approval, 'promoter'), getattr(approval, 'cause'), getattr(approval, 'sql'),
+               getattr(approval, 'approver'))
+
+    manager = role_service.query_list({'username': getattr(approval, 'approver')})[0]
+
+    send(subject, body, [getattr(manager, 'email')], ['yunzaocenter@3songshu.com'])
+
     return redirect('/sql/approval/list.html')
 
 
@@ -110,8 +154,9 @@ def approval_del(id):
 @auth(['开发', '测试', '运维'])
 def to_approval(id):
     approval = sql_approval_service.get_by_id(id)
+    owner = role_service.query_list({'role': '开发', 'is_owner': 1}, {'size': 2000})
 
-    return render_template("/sqlapproval/approval.html", user=g.user, approval=approval)
+    return render_template("/sqlapproval/approval.html", user=g.user, approval=approval, owner=owner)
 
 
 @app.route('/sql/approval.html', methods=['POST'])
@@ -143,13 +188,54 @@ def approval():
     setattr(approval, 'approval_opinion', opinion)
     setattr(approval, 'executor', executor)
 
+    promoter = role_service.query_list({'username': getattr(approval, 'promoter')})[0]
+
     if msg:
-        return render_template("/sqlapproval/approval.html", user=g.user, approval=approval, msg=msg)
+        owner = role_service.query_list({'role': '开发', 'is_owner': 1}, {'size': 2000})
+        return render_template("/sqlapproval/approval.html", user=g.user, approval=approval, msg=msg, owner=owner)
 
     if status == 2:
         delattr(approval, 'executor')
 
     sql_approval_service.update(param)
+
+    subject = '【线上SQL审核结果】%s' % getattr(approval, 'title')
+
+    if status == 1:
+        executor = role_service.query_list({'username': getattr(approval, 'executor')})[0]
+        body = '''
+                发起人：%s
+
+                线上SQL执行原因：
+                    %s
+
+                执行SQL脚本为：
+                    %s
+
+                已由 %s 审核通过，审核意见：
+                    %s
+                
+                请 %s执行上线
+                ''' \
+               % (getattr(approval, 'promoter'), getattr(approval, 'cause'), getattr(approval, 'sql'),
+                  getattr(approval, 'approver'), getattr(approval, 'approval_opinion'), getattr(approval, 'executor'))
+        send(subject, body, [getattr(promoter, 'email'), getattr(executor, 'email')], ['yunzaocenter@3songshu.com'])
+    else:
+        body = '''
+                发起人：%s
+
+                线上SQL执行原因：
+                    %s
+
+                执行SQL脚本为：
+                    %s
+
+                已被 %s 审核驳回，审核意见：
+                    %s
+                ''' % (getattr(approval, 'promoter'), getattr(approval, 'cause'), getattr(approval, 'sql'),
+                       getattr(approval, 'approver'), getattr(approval, 'approval_opinion'))
+
+        send(subject, body, [getattr(approval, 'promoter')], ['yunzaocenter@3songshu.com'])
 
     return redirect('/sql/approval/list.html')
 
@@ -179,6 +265,24 @@ def approval_exec(id):
     setattr(approval, 'status', 3)
 
     sql_approval_service.update(approval)
+
+    promoter = role_service.query_list({'username': getattr(approval, 'promoter')})[0]
+    approver = role_service.query_list({'username': getattr(approval, 'approver')})[0]
+
+    subject = '【线上SQL执行结果反馈】%s' % getattr(approval, 'title')
+    body = '''
+            发起人：%s
+
+            线上SQL执行原因：
+                %s
+
+            执行SQL脚本为：
+                %s
+
+            已被 %s 执行上线，请验证结果
+            ''' % (getattr(approval, 'promoter'), getattr(approval, 'cause'), getattr(approval, 'sql'),
+                   getattr(approval, 'executor'))
+    send(subject, body, [getattr(promoter, 'email'), getattr(approver, 'email')], ['yunzaocenter@3songshu.com'])
 
     return redirect('/sql/approval/list.html')
 
