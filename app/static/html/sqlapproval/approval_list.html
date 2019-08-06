@@ -28,7 +28,7 @@
                       <div class="input-group">
                           <span class="input-group-addon" id="sizing-addon2">审核状态</span>
                           <select class="selectpicker" data-size="10" name="status">
-                              <option>选择审核状态</option>
+                              <option value="">选择审核状态</option>
                               <option value="0" {% if query.status=='0' %}selected{% endif %}>待审核</option>
                               <option value="1" {% if query.status=='1' %}selected{% endif %}>审核通过</option>
                               <option value="2" {% if query.status=='2' %}selected{% endif %}>审核不通过</option>
