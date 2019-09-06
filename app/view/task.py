@@ -349,7 +349,9 @@ def test_deploy():
         mr.delete()
 
     dingtalk_util.send_deploy_msg(task.project_name, '测试环境')
-
+    if 'usc' in task.project_name or 'toc' in task.project_name  or 'mc' in task.project_name  or 'upc' in task.project_name  or 'stwms' in task.project_name  or 'uoc' in task.project_name  or 'uic' in task.project_name or 'sco' in task.project_name 'cms' in task.project_name:
+        context='{}上线{},\n分支号{},\n上线内容{}, \n请在上线完成测试验证无误后merge到master！'.format(g.user['username'], task.project_name,task.project_branch,task.discription)
+        dingtalk_util.send_shop_deploy_msg(context)
     try:
         jk = jenkins.get_jk()
         jk.build_job(project_config.test_job, {'branch': test_branch_name})
