@@ -495,6 +495,9 @@ def prod_deploy():
 
     dingtalk_util.send_deploy_msg(task.project_name, '线上环境')
 
+    if 'usc' in task.project_name or 'toc' in task.project_name  or 'mc' in task.project_name  or 'upc' in task.project_name  or 'stwms' in task.project_name  or 'uoc' in task.project_name  or 'uic' in task.project_name or 'sco' in task.project_name 'cms' in task.project_name:
+        context='{}上线{},\n分支号{},\n上线内容{}, \n测试验证无误后请merge到master！'.format(g.user['username'], task.project_name,task.project_branch,task.discription)
+        dingtalk_util.send_shop_deploy_msg(context)
     try:
         jk = jenkins.get_jk()
         jk.build_job(project_config.pro_job, {'branch': task.project_branch})
@@ -548,6 +551,9 @@ def merge_master(id):
         return json.dumps({'ok': False, 'msg': 'merge代码失败，请联系开发解决冲突后再重试'})
     finally:
         mr.delete()
+    if 'usc' in task.project_name or 'toc' in task.project_name  or 'mc' in task.project_name  or 'upc' in task.project_name  or 'stwms' in task.project_name  or 'uoc' in task.project_name  or 'uic' in task.project_name or 'sco' in task.project_name 'cms' in task.project_name:
+        context='{}已将{} {}merge到master！'.format(g.user['username'], task.project_name,task.project_branch)
+        dingtalk_util.send_shop_deploy_msg(context)
 
     task.status = 7
     task.last_run_job = project_config.pre_job
