@@ -273,6 +273,17 @@ def edit_task():
     return redirect('/task/current.html')
 
 
+@app.route('/task/del/<id>.html', methods=['DELETE'])
+@auth(['开发', '运维', '管理员'])
+def del_task(id):
+    task = task_service.get_by_id(id)
+    if task and task.status < 6:
+        task_service.del_by_id(id)
+    else:
+        return json.dumps({'ok': False, 'msg': '已上线的任务不可删除'})
+    return json.dumps({'ok': True})
+
+
 @app.route('/task/submittest.html', methods=['POST'])
 @auth(['开发'])
 def submit_test():

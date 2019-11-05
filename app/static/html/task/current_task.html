@@ -182,6 +182,9 @@
                         <div class="panel-heading" style="height: 40px">
                             {{task.title}}
                             <div style="float: right">
+                                {% if ('开发' in user.roles or '运维' in user.roles or '管理员' in user.roles) and task.status != '已上线' %}
+                                <a href="javascript:void (0)" onclick="showDelTask({{task.id}}, '{{task.title}}')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                                {% endif %}
                                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"
                                       rel-toggle="popover" title="任务操作日志" data-toggle="tooltip" data-placement="right"></span>
 
@@ -382,6 +385,23 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" onclick="deployPre()">点击部署</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="delTaskModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">删除任务</h4>
+             </div>
+            <div class="modal-body">
+                <p id="delTaskDesc"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="delTask()">删除</button>
             </div>
         </div>
     </div>
@@ -597,6 +617,12 @@
         $("#deployProdModal").modal();
     }
 
+    function showDelTask(taskId, taskName) {
+        $("#currentTaskId").val(taskId);
+        $("#delTaskDesc").html('确定删除: ' + taskName + "吗？");
+        $("#delTaskModal").modal();
+    }
+
     function deployProd() {
         let taskId = $("#currentTaskId").val();
 
@@ -631,6 +657,22 @@
         $.ajax({
             url: '/task/'+ taskId +'/merge/master',
             method: 'post',
+            success: (d) => {
+                d = JSON.parse(d);
+                if (d.ok){
+                    window.location.reload();
+                } else {
+                    alert(d.msg)
+                }
+            }
+        })
+    }
+    
+    function delTask() {
+        let taskId = $("#currentTaskId").val();
+        $.ajax({
+            url: '/task/del/' + taskId + '.html',
+            method: 'delete',
             success: (d) => {
                 d = JSON.parse(d);
                 if (d.ok){
