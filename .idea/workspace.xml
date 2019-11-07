@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="89106d9e-9b1b-4503-a8ca-17ce81b03ecb" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/util/dingtalk_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/util/dingtalk_util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/html/task/current_task.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/html/task/current_task.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,11 +34,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/util/dingtalk_util.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="270">
-              <caret line="18" column="20" selection-start-line="18" selection-start-column="20" selection-end-line="18" selection-end-column="20" />
+              <caret line="18" column="51" selection-start-line="18" selection-start-column="51" selection-end-line="18" selection-end-column="51" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -49,8 +49,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/db/mapper.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+            <state relative-caret-position="136">
+              <caret line="28" column="24" lean-forward="true" selection-start-line="28" selection-start-column="24" selection-end-line="28" selection-end-column="24" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -70,11 +70,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/static/html/task/current_task.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="553">
-              <caret line="673" column="27" selection-start-line="673" selection-start-column="24" selection-end-line="673" selection-end-column="27" />
+            <state relative-caret-position="533">
+              <caret line="250" column="57" selection-start-line="250" selection-start-column="57" selection-end-line="250" selection-end-column="57" />
             </state>
           </provider>
         </entry>
@@ -148,11 +148,11 @@
         <option value="$PROJECT_DIR$/app/static/html/gitlab/edit_project_config.html" />
         <option value="$PROJECT_DIR$/app/static/html/gitlab/add_project_config.html" />
         <option value="$PROJECT_DIR$/app/static/html/sqlapproval/approval_list.html" />
-        <option value="$PROJECT_DIR$/app/static/html/task/current_task.html" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/gunicorn.config.py" />
         <option value="$PROJECT_DIR$/app/view/task.py" />
         <option value="$PROJECT_DIR$/app/util/dingtalk_util.py" />
+        <option value="$PROJECT_DIR$/app/static/html/task/current_task.html" />
       </list>
     </option>
   </component>
@@ -324,7 +324,7 @@
       <workItem from="1571303313599" duration="2479000" />
       <workItem from="1572255768710" duration="642000" />
       <workItem from="1572603219134" duration="828000" />
-      <workItem from="1572925320527" duration="8204000" />
+      <workItem from="1572925320527" duration="12858000" />
     </task>
     <task id="LOCAL-00001" summary="优化">
       <created>1560963087083</created>
@@ -382,23 +382,37 @@
       <option name="project" value="LOCAL" />
       <updated>1572945788050</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="修改网络模型">
+      <created>1572949546952</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1572949546952</updated>
+    </task>
+    <task id="LOCAL-00010" summary="修改网络模型">
+      <created>1573092957688</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1573092957688</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="79898000" />
+    <option name="totallyTimeSpent" value="84552000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1680" height="1027" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.8542435" visible="true" weight="0.1892552" />
-      <window_info id="Structure" order="1" sideWeight="0.14575645" side_tool="true" visible="true" weight="0.1892552" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.8544304" visible="true" weight="0.1892552" />
+      <window_info id="Structure" order="1" sideWeight="0.14556962" side_tool="true" visible="true" weight="0.1892552" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32941177" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.42032087" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.42032087" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -406,7 +420,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32941177" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Terminal" order="11" weight="0.27807486" />
+      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.15508021" />
       <window_info anchor="bottom" id="Python Console" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -784,16 +798,6 @@
     <entry file="file://$PROJECT_DIR$/app/util/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/db/mapper.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-          <folding>
-            <element signature="e#0#17#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/db/model.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="448">
@@ -801,13 +805,6 @@
           <folding>
             <element signature="e#0#55#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/static/html/task/current_task.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="553">
-          <caret line="673" column="27" selection-start-line="673" selection-start-column="24" selection-end-line="673" selection-end-column="27" />
         </state>
       </provider>
     </entry>
@@ -859,10 +856,27 @@
     <entry file="file://$PROJECT_DIR$/app/util/dingtalk_util.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
-          <caret line="18" column="20" selection-start-line="18" selection-start-column="20" selection-end-line="18" selection-end-column="20" />
+          <caret line="18" column="51" selection-start-line="18" selection-start-column="51" selection-end-line="18" selection-end-column="51" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/db/mapper.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="28" column="24" lean-forward="true" selection-start-line="28" selection-start-column="24" selection-end-line="28" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#17#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/static/html/task/current_task.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="533">
+          <caret line="250" column="57" selection-start-line="250" selection-start-column="57" selection-end-line="250" selection-end-column="57" />
         </state>
       </provider>
     </entry>
