@@ -33,6 +33,7 @@ def send(subject, body, to, cc=None):
   #  server.sendmail(from_addr, to, msg.as_string())
   #  server.quit()
   #  return msg_id
+  pass
 
 
 if __name__ == '__main__':
