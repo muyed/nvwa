@@ -27,7 +27,7 @@ def send(subject, body, to, cc=None):
 
      msg['Message-ID'] = msg_id
 
-     server = smtplib.SMTP(smtp_url, 25)
+     server = smtplib.SMTP(smtp_url, 225)
      server.set_debuglevel(1)
      server.login(from_addr, password)
      server.sendmail(from_addr, to, msg.as_string())
