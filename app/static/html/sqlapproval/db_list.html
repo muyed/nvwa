@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  {% include 'common/head.html' %}
+    <style>
+        table{
+            table-layout:fixed
+        }
+
+        td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+    </style>
+  <body>
+
+    {% include 'common/navbar.html' %}
+
+    <div class="container">
+        {% if msg %}
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Warning!</strong> {{msg}}
+        </div>
+        {% endif %}
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+          <form method="get" action="/db/list.html">
+              <div class="row">
+                  <div class="col-lg-9">
+                      <div class="input-group">
+                          <span class="input-group-addon" id="sizing-addon2">db库名</span>
+                          <input type="text" class="form-control" name="db_name" value="{{query.db_name}}" aria-describedby="sizing-addon2">
+                      </div>
+                  </div>
+
+                  <div class="col-lg-3">
+                      <button type="submit" class="btn btn-default">查询</button>
+                      <a href="/db/add.html">
+                          <button type="button" class="btn btn-default">新增数据库信息</button>
+                      </a>
+                  </div>
+              </div>
+              <br>
+
+              <table data-toggle="table">
+                  <thead>
+                  <tr>
+                      <th>db库名</th>
+                      <th>db url</th>
+                      <th>username</th>
+                      <th>password</th>
+                      <th>
+                          操作
+                      </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for info in infos %}
+                  <tr>
+                      <td>{{info.db_name}}</td>
+                      <td>{{info.db_url}}</td>
+                      <td>{{info.username}}</td>
+                      <td>{{info.password}}</td>
+                      <td>
+                          <a href="javascript:void (0)" onclick="delDb({{info.id}})">删除</a>
+                      </td>
+                  </tr>
+                  {% endfor %}
+                  </tbody>
+              </table>
+              {% include 'common/page.html' %}
+          </form>
+      </div>
+
+    </div>
+
+
+    <div id="delModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">删除</h4>
+                </div>
+                <div class="modal-body">
+                    <p>确定要删除id为【<b id="delId"></b>】的数据库信息吗</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="del()">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% include 'common/script.html' %}
+
+    <script>
+        function delDb(id) {
+            $("#delId").html(id);
+            $("#delModal").modal();
+        }
+
+        function del() {
+            window.location.href = '/db/del/' + $('#delId').html() + '.html'
+        }
+    </script>
+  </body>
+</html>

@@ -109,3 +109,12 @@ class SqlApproval(Base, BaseModel):
     executor = Column(String(45))
     status = Column(Integer())
     approval_opinion = Column(String(1024))
+    db_name = Column(String(45))
+
+
+class DbInfo(Base, BaseModel):
+    __tablename__ = 'db_info'
+    db_name = Column(String(45))
+    db_url = Column(String(128))
+    username = Column(String(45))
+    password = Column(String(1024))

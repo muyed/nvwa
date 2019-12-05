@@ -1,7 +1,9 @@
 from .login import *
 from ..util.email_util import send
+from ..util.ras_util import encrypt, decrypt
 
 sql_approval_service = SqlApprovalService()
+db_info_service = DbInfoService()
 
 
 @app.route('/sql/approval/list.html', methods=['GET'])
@@ -28,8 +30,9 @@ def approval_list():
 @auth(['开发', '测试', '运维'])
 def to_approval_add():
     managers = role_service.query_list({'role': '开发', 'is_manager': 1}, {'size': 2000})
+    dbs = db_info_service.query_list({}, {'size': 1000})
 
-    return render_template('sqlapproval/approval_add.html', user=g.user, approval={}, managers=managers)
+    return render_template('sqlapproval/approval_add.html', user=g.user, approval={}, managers=managers, dbs=dbs)
 
 
 @app.route('/sql/approval/add.html', methods=['POST'])
@@ -77,7 +80,9 @@ def approval_add():
 def to_approval_update(id):
     approval = sql_approval_service.get_by_id(id)
     managers = role_service.query_list({'role': '开发', 'is_manager': 1}, {'size': 2000})
-    return render_template('sqlapproval/approval_update.html', user=g.user, approval=approval, managers=managers)
+    dbs = db_info_service.query_list({}, {'size': 1000})
+    return render_template('sqlapproval/approval_update.html', user=g.user, approval=approval, managers=managers,
+                           dbs=dbs)
 
 
 @app.route('/sql/approval/update.html', methods=['POST'])
@@ -97,7 +102,7 @@ def approval_update():
 
     old = sql_approval_service.get_by_id(getattr(approval, 'id'))
 
-    if getattr(old, 'status') != 0 or getattr(old, 'status') != 2:
+    if getattr(old, 'status') != 0 and getattr(old, 'status') != 2:
         msg = '只有状态为待审核和审核未通过可以再次编辑'
     if msg:
         return render_template('sqlapproval/approval_update.html', user=g.user, approval=approval, msg=msg)
@@ -285,5 +290,44 @@ def approval_exec(id):
     send(subject, body, [getattr(promoter, 'email'), getattr(approver, 'email')], ['yunzaocenter@3songshu.com'])
 
     return redirect('/sql/approval/list.html')
+
+
+@app.route('/db/list.html', methods=['GET'])
+@auth(['管理员'])
+def db_info_list():
+    query = {}
+    page = {}
+    db_name = request.args.get('db_name')
+    current_page = request.args.get('current')
+    if db_name:
+        query['db_name'] = db_name
+    if current_page:
+        page['current_page'] = current_page
+
+    infos = db_info_service.query_list(query, page)
+
+    return render_template("/sqlapproval/db_list.html", user=g.user, infos=infos, query=query, page=page)
+
+
+@app.route('/db/add.html', methods=['GET'])
+@auth(['管理员'])
+def to_db_add():
+    return render_template('sqlapproval/db_add.html', user=g.user, info={})
+
+
+@app.route('/db/add.html', methods=['POST'])
+@auth(['管理员'])
+def db_add():
+    info = create_model(DbInfo, request.form.to_dict())
+    setattr(info, 'password', encrypt(getattr(info, 'password')))
+    db_info_service.add(info)
+    return redirect('/db/list.html')
+
+
+@app.route('/db/del/<id>.html')
+@auth(['管理员'])
+def del_db(id):
+    db_info_service.del_by_id(id)
+    return redirect('/db/list.html')
 
 

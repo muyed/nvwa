@@ -216,3 +216,8 @@ class SqlApprovalService(BaseService):
         return [create_model(self.table_cls, r.to_dict(True)) for r in list(result)]
 
 
+class DbInfoService(BaseService):
+    def __init__(self):
+        super(DbInfoService, self).__init__(DbInfo)
+
+

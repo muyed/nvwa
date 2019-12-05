@@ -8,3 +8,4 @@ javaobj-py3==0.2.4
 python-gitlab==1.9.0
 python-jenkins==1.4.0
 gevent
+rsa

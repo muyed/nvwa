@@ -53,6 +53,7 @@
                       <th>发起人</th>
                       <th>审批人</th>
                       <th>执行人</th>
+                      <th>执行库</th>
                       <th>状态</th>
                       <th>发起时间</th>
                       <th>更新时间</th>
@@ -68,6 +69,7 @@
                       <td>{{approval.promoter}}</td>
                       <td>{{approval.approver}}</td>
                       <td>{{approval.executor}}</td>
+                      <td>{{approval.db_name}}</td>
                       <td>
                           {% if approval.status==0 %}待审核{% endif %}
                           {% if approval.status==1 %}审核通过{% endif %}
