@@ -83,7 +83,7 @@
                <div class="form-group">
                    <div class="col-sm-offset-2 col-sm-8">
                        {% if approval.status==1 and approval.executor == user.username %}
-                        <button id="exec" type="button" class="btn btn-primary" onclick="showExec({{approval.id}})">已上线执行</button>
+                        <button id="exec" type="button" class="btn btn-primary" onclick="showExec({{approval.id}})">执行上线</button>
                        {% endif %}
                    </div>
                </div>
@@ -111,13 +111,13 @@
     </div>
 
     {% include 'common/script.html' %}
-  
+
     <script>
         function showExec(id) {
             $("#execId").html(id);
             $("#execModal").modal();
         }
-        
+
         function exec() {
             window.location.href = '/sql/approval/exec/' + $('#execId').html() + '.html'
         }
