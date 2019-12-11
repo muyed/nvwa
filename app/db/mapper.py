@@ -220,4 +220,13 @@ class DbInfoService(BaseService):
     def __init__(self):
         super(DbInfoService, self).__init__(DbInfo)
 
+    def query_by_name(self, db_name):
+        query = {'row_status': 0, 'db_name': db_name}
+        result = self.query_list(query)
+        if result:
+            return result[0]
+        return None
+
+
+
 

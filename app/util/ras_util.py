@@ -55,10 +55,11 @@ def encrypt(message):
 
 def decrypt(en):
     key = str_to_pri()
-    return rsa.decrypt(base64.b64decode(en.encode('UTF-8')), key)
+    return rsa.decrypt(base64.b64decode(en.encode('UTF-8')), key).decode('UTF-8')
 
 
 if __name__ == '__main__':
     s = '哈哈哈'
     e = encrypt(s)
-    print(decrypt(e).decode("utf-8"))
+    print(e)
+    print(decrypt(e))

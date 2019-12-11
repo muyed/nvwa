@@ -1,6 +1,7 @@
 from .login import *
 from ..util.email_util import send
-from ..util.ras_util import encrypt, decrypt
+from ..util.ras_util import encrypt
+from ..util.db_exec_util import exec_sql
 
 sql_approval_service = SqlApprovalService()
 db_info_service = DbInfoService()
@@ -262,7 +263,18 @@ def approval_exec(id):
     if getattr(approval, 'status') != 1:
         msg = '只有状态为审核通过才能更新为已执行'
     if getattr(approval, 'executor') != g.user['username']:
-        msg = '你不是执行人，不知执行该操作'
+        msg = '你不是执行人，不能执行该操作'
+    if not hasattr(approval, 'db_name'):
+        msg = '请指定执行库'
+
+    db_info = db_info_service.query_by_name(getattr(approval, 'db_name'))
+    if db_info:
+        exec_result = exec_sql(getattr(db_info, 'db_url'), getattr(db_info, 'username'), getattr(db_info, 'password'),
+                               getattr(approval, 'sql'), g.sid)
+        if type(exec_result) == str:
+            msg = exec_result
+    else:
+        msg = '执行库不存在，请联系管理员'
 
     if msg:
         return render_template("/sqlapproval/approval_detail.html", user=g.user, approval=approval, msg=msg)
@@ -283,11 +295,15 @@ def approval_exec(id):
 
             执行SQL脚本为：
                 %s
+            
+            执行结果为:
+                %s
 
             已被 %s 执行上线，请验证结果
             ''' % (getattr(approval, 'promoter'), getattr(approval, 'cause'), getattr(approval, 'sql'),
-                   getattr(approval, 'executor'))
+                   exec_result[0], getattr(approval, 'executor'))
     send(subject, body, [getattr(promoter, 'email'), getattr(approver, 'email')], ['yunzaocenter@3songshu.com'])
+    print(body)
 
     return redirect('/sql/approval/list.html')
 
