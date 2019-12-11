@@ -174,11 +174,43 @@ class TaskLogService(BaseService):
         group by t.project_name;
     '''
 
+    group_pre_sql = '''
+        select count(tl.task_status), t.project_name 
+        from task_log tl, task t 
+        where t.id = tl.task_id and t.project_name != '' and tl.task_status = 4 and tl.gmt_create >= '%s'
+        group by t.project_name;
+    '''
+
+    group_prod_sql = '''
+        select count(tl.task_status), t.project_name 
+        from task_log tl, task t
+        where t.id = tl.task_id and t.project_name != '' and tl.task_status = 7 and tl.gmt_create >= '%s'
+        group by t.project_name;
+    '''
+
     def group_daily(self):
-        today = datetime.date.today()
-        start = today - datetime.timedelta(days=today.weekday() + 7)
-        result = g.db.session.execute(self.group_daily_sql % str(start))
-        print(result)
+        start = datetime.date.today()
+        one_day = datetime.timedelta(days=1)
+        while start.weekday() != 0:
+            start -= one_day
+        result = g.db.execute(self.group_daily_sql % str(start)).fetchall()
+        return [{'project': i[1], 'count': i[0]} for i in result]
+
+    def group_pre(self):
+        start = datetime.date.today()
+        one_day = datetime.timedelta(days=1)
+        while start.weekday() != 0:
+            start -= one_day
+        result = g.db.execute(self.group_pre_sql % str(start)).fetchall()
+        return [{'project': i[1], 'count': i[0]} for i in result]
+
+    def group_prod(self):
+        start = datetime.date.today()
+        one_day = datetime.timedelta(days=1)
+        while start.weekday() != 0:
+            start -= one_day
+        result = g.db.execute(self.group_prod_sql % str(start)).fetchall()
+        return [{'project': i[1], 'count': i[0]} for i in result]
 
 
 class RelUserTaskService(BaseService):

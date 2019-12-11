@@ -69,4 +69,4 @@ class JavaToJSONEncoder(json.JSONEncoder):
         return super(JavaToJSONEncoder, self).default(obj)
 
 
-from app.view import index, login, role, gitlab, jenkins, task, sql_approval
+from app.view import index, login, role, gitlab, jenkins, task, sql_approval, report

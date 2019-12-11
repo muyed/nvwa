@@ -24,7 +24,10 @@ def exec_sql(url, username, password, sql, sid):
         result_str = ''
         for line in exec_result_list:
             result_str = result_str + '行号：%d, 执行状态：%s, 影响行数：%d, 错误信息：%s \n' % \
-                         (line['lineNum'], '成功' if(line['status'] == 0) else '失败', line['exeInt'], line['errMsg'])
+                         (line['lineNum'],
+                          '成功' if(line['status'] == 0) else '失败',
+                          line['exeInt'] if 'exeInt' in line else 0,
+                          line['errMsg'])
         return [result_str]
     except Exception as e:
         return str(e)
