@@ -238,6 +238,14 @@ class SqlApprovalService(BaseService):
     def __init__(self):
         super(SqlApprovalService, self).__init__(SqlApproval)
 
+    _group_by_db_sql = '''
+        select count(id), db_name from sql_approval where db_name is not null and gmt_create >= '%s' group by db_name
+    '''
+
+    _group_by_promoter_sql = '''
+        select count(id), promoter from sql_approval where db_name is not null and gmt_create >= '%s' group by promoter
+    '''
+
     def my_list(self, query, page={'current': 1}):
         if 'current' not in page or page['current'] < 1:
             page['current'] = 1
@@ -260,6 +268,22 @@ class SqlApprovalService(BaseService):
                                       .count() / page['size']))
 
         return [create_model(self.table_cls, r.to_dict(True)) for r in list(result)]
+
+    def group_by_db(self):
+        start = datetime.date.today()
+        one_day = datetime.timedelta(days=1)
+        while start.weekday() != 0:
+            start -= one_day
+        result = g.db.execute(self._group_by_db_sql % str(start)).fetchall()
+        return [{'db': i[1], 'count': i[0]} for i in result]
+
+    def group_by_promoter(self):
+        start = datetime.date.today()
+        one_day = datetime.timedelta(days=1)
+        while start.weekday() != 0:
+            start -= one_day
+        result = g.db.execute(self._group_by_promoter_sql % str(start)).fetchall()
+        return [{'promoter': i[1], 'count': i[0]} for i in result]
 
 
 class DbInfoService(BaseService):
