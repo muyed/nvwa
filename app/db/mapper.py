@@ -1,6 +1,7 @@
 from app import g
 from .model import *
 import math
+import datetime
 
 
 class BaseService(object):
@@ -165,6 +166,19 @@ class TaskService(BaseService):
 class TaskLogService(BaseService):
     def __init__(self):
         super(TaskLogService, self).__init__(TaskLog)
+
+    group_daily_sql = '''
+        select count(tl.task_status), t.project_name 
+        from task_log tl, task t 
+        where t.id = tl.task_id and t.project_name != '' and tl.task_status = 2 and tl.gmt_create >= '%s'
+        group by t.project_name;
+    '''
+
+    def group_daily(self):
+        today = datetime.date.today()
+        start = today - datetime.timedelta(days=today.weekday() + 7)
+        result = g.db.session.execute(self.group_daily_sql % str(start))
+        print(result)
 
 
 class RelUserTaskService(BaseService):
