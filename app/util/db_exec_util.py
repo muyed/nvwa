@@ -5,7 +5,9 @@ from ..util.ras_util import encrypt
 
 
 def exec_sql(url, username, password, sql, sid):
-    params = json.dumps({'url': url, 'username': username, 'password': password, 'sql': encrypt(sql)})
+
+    params = json.dumps({'url': url, 'username': username, 'password': password,
+                         'sql': [encrypt(sql[i:i+100]) for i in range(0, len(sql), 100)]})
     headers = {'Content-Type': 'application/json', 'Cookie': 'sid=%s' % sid}
     try:
         exec_req = client.Request(config.DB_EXEC_URL, data=bytes(params, 'utf-8'), headers=headers)
