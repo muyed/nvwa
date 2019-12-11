@@ -25,7 +25,7 @@ class LocalConfig(Config):
     DB_URL = 'mysql+mysqlconnector://sntuic:1qaz!QAZ@snt-test-pub.mysql.rds.aliyuncs.com:3306/nvwa'
     REDIS_CONFIG = {'host': '47.99.215.186', 'port': 6379, 'password': '3edc#EDC'}
     LOGIN_URL = 'http://uic-daily.3songshu.com/login'
-    DB_EXEC_URL = 'http://umc-daily.3songshu.com:7021/tools/db/exec'
+    DB_EXEC_URL = 'http://umc-daily.3songshu.com/tools/db/exec'
 
 
 class DailyConfig(Config):
