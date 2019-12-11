@@ -92,19 +92,22 @@
 
     </div>
 
-    <div id="execModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-        <div class="modal-dialog modal-sm" role="document">
+    <div id="execModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">sql线上执行状态同步</h4>
+                    <h4 class="modal-title">请认真确认以下sql的正确性、执行目标数据库，确认无误后方能执行上线</h4>
                 </div>
                 <div class="modal-body">
-                    <p>确定将id为【<b id="execId"></b>】的状态更新成已执行吗</p>
+                    <div>目标库：{{approval.db_name}}</div>
+                    <div>
+                        {{approval.sql}}
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" onclick="exec()">确定</button>
+                    <button type="button" class="btn btn-primary" onclick="exec()">确认无误并上线</button>
                 </div>
             </div>
         </div>
