@@ -1,7 +1,8 @@
 from .login import *
 from ..util.email_util import send
 from ..util.ras_util import encrypt
-from ..util.db_exec_util import exec_sql
+from ..util.db_exec_util import exec_sql, explain
+import json
 
 sql_approval_service = SqlApprovalService()
 db_info_service = DbInfoService()
@@ -208,6 +209,9 @@ def approval():
     subject = '【线上SQL审核结果】%s' % getattr(approval, 'title')
 
     if status == 1:
+        db_info = db_info_service.query_by_name(getattr(approval, 'db_name'))
+        plain = explain(getattr(db_info, 'db_url'), getattr(db_info, 'username'), getattr(db_info, 'password'),
+                        getattr(approval, 'sql'))
         executor = role_service.query_list({'username': getattr(approval, 'executor')})[0]
         body = '''
                 发起人：%s
@@ -217,13 +221,16 @@ def approval():
 
                 执行SQL脚本为：
                     %s
+                
+                执行计划为：
+                    %s
 
                 已由 %s 审核通过，审核意见：
                     %s
                 
                 请 %s执行上线
                 ''' \
-               % (getattr(approval, 'promoter'), getattr(approval, 'cause'), getattr(approval, 'sql'),
+               % (getattr(approval, 'promoter'), getattr(approval, 'cause'), getattr(approval, 'sql'), plain,
                   getattr(approval, 'approver'), getattr(approval, 'approval_opinion'), getattr(approval, 'executor'))
         send(subject, body, [getattr(promoter, 'email'), getattr(executor, 'email')], ['yunzaocenter@3songshu.com'])
     else:
@@ -306,6 +313,22 @@ def approval_exec(id):
     print(body)
 
     return redirect('/sql/approval/list.html')
+
+
+@app.route('/sql/approval/explain/<id>.html', methods=['GET'])
+@auth(['开发', '测试', '运维'])
+def sql_explain(id):
+    approval = sql_approval_service.get_by_id(id)
+    if not hasattr(approval, 'db_name'):
+        return json.dumps({'errMsg': '请指定执行库'}, ensure_ascii=False)
+
+    db_info = db_info_service.query_by_name(getattr(approval, 'db_name'))
+    if not db_info:
+        return json.dumps({'errMsg': '数据库不存在，请联系管理员'}, ensure_ascii=False)
+    result = explain(getattr(db_info, 'db_url'), getattr(db_info, 'username'), getattr(db_info, 'password'),
+                     getattr(approval, 'sql'))
+
+    return json.dumps({'data': result}, ensure_ascii=False)
 
 
 @app.route('/db/list.html', methods=['GET'])

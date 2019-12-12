@@ -78,6 +78,7 @@
 
                <div class="form-group">
                    <div class="col-sm-offset-2 col-sm-8">
+                        <button type="button" class="btn btn-primary" onclick="showExec({{approval.id}})">查看执行计划</button>
                         <button type="submit" class="btn btn-primary">提交</button>
                    </div>
                </div>
@@ -86,10 +87,54 @@
 
     </div>
 
-    {% include 'common/script.html' %}
-  
-    <script>
+    <div id="execModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">查看执行计划</h4>
+                </div>
+                <div class="modal-body">
+                    <div>任务id:<b id="execId"></b></div>
+                    <div>目标库：{{approval.db_name}}</div>
+                    <div>
+                        执行计划结果：<br>
+                        <p id="plain"></p>
+                    </div>
+                    <div>
+                        待执行sql：
+                        <br>
+                        {{approval.sql}}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    {% include 'common/script.html' %}
+
+    <script>
+        function showExec(id) {
+            $.ajax({
+                url: '/sql/approval/explain/'+ id +'.html',
+                method: 'GET',
+                async: true,
+                success: (d) => {
+                    d = JSON.parse(d);
+                    if (d.errMsg){
+                        alert(d.errMsg)
+                    } else {
+                        let plain = d.data.replace(/\n/g, "<br>").replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
+                        $("#plain").html(plain);
+                        $("#execId").html(id);
+                        $("#execModal").modal();
+                    }
+                }
+            });
+        }
     </script>
   </body>
 </html>

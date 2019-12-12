@@ -97,12 +97,18 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">请认真确认以下sql的正确性、执行目标数据库，确认无误后方能执行上线</h4>
+                    <h4 class="modal-title">请认真确认核对sql的正确性、校验执行计划结果、执行目标数据库，确认无误后方能执行上线</h4>
                 </div>
                 <div class="modal-body">
                     <div>任务id:<b id="execId"></b></div>
                     <div>目标库：{{approval.db_name}}</div>
                     <div>
+                        执行计划结果：<br>
+                        <p id="plain"></p>
+                    </div>
+                    <div>
+                        待执行sql：
+                        <br>
                         {{approval.sql}}
                     </div>
                 </div>
@@ -118,8 +124,22 @@
 
     <script>
         function showExec(id) {
-            $("#execId").html(id);
-            $("#execModal").modal();
+            $.ajax({
+                url: '/sql/approval/explain/'+ id +'.html',
+                method: 'GET',
+                async: true,
+                success: (d) => {
+                    d = JSON.parse(d);
+                    if (d.errMsg){
+                        alert(d.errMsg)
+                    } else {
+                        let plain = d.data.replace(/\n/g, "<br>").replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
+                        $("#plain").html(plain);
+                        $("#execId").html(id);
+                        $("#execModal").modal();
+                    }
+                }
+            });
         }
 
         function exec() {
