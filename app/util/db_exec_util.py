@@ -49,7 +49,7 @@ def explain(url, username, password, sql):
             return data['errMsg']
         result_str = ''
         for line in data['resultList']:
-            result_str = '行号：%d, 执行状态：%s, 错误信息：%s 本行执行计划结果为：\n' % (line['lineNum'],
+            result_str += '行号：%d, 执行状态：%s, 错误信息：%s 本行执行计划结果为：\n' % (line['lineNum'],
                                                                    '成功' if(line['status'] == 0) else '失败',
                                                                    line['errMsg'])
             if 'plain' in line:
