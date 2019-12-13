@@ -1,8 +1,10 @@
 from .login import *
+from ..util import db_exec_util, ras_util
 import json
 
 task_log_service = TaskLogService()
 sql_approval_service = SqlApprovalService()
+db_info_server = DbInfoService()
 
 
 @app.route("/report/deploy/daily", methods=['GET'])
@@ -33,3 +35,15 @@ def sql_by_db():
 def sql_by_promoter():
     result = sql_approval_service.group_by_promoter()
     return json.dumps(result, ensure_ascii=False)
+
+
+@app.route("/report/db/information", methods=['GET'])
+def db_information():
+    infos = db_info_server.query_list(query={}, page={'pageSize': 1000})
+    params = [[getattr(i, 'db_url'), getattr(i, 'username'), getattr(i, 'password'), getattr(i, 'db_name')]
+              for i in infos]
+    result = db_exec_util.information(params)
+    return json.dumps(result, ensure_ascii=False)
+
+
+

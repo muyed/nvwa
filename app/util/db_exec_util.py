@@ -37,7 +37,7 @@ def explain(url, username, password, sql):
                          'sql': [encrypt(sql[i:i + 39]) for i in range(0, len(sql), 39)]})
     headers = {'Content-Type': 'application/json'}
     try:
-        exec_req = client.Request(config.DB_EXPLAIN_ERL, data=bytes(params, 'utf-8'), headers=headers)
+        exec_req = client.Request(config.DB_EXPLAIN_URL, data=bytes(params, 'utf-8'), headers=headers)
         exec_resp = client.urlopen(exec_req)
         if exec_resp.code != 200:
             return 'request umc failed, resp code: %d' % exec_resp.code
@@ -50,8 +50,8 @@ def explain(url, username, password, sql):
         result_str = ''
         for line in data['resultList']:
             result_str += '行号：%d, 执行状态：%s, 错误信息：%s 本行执行计划结果为：\n' % (line['lineNum'],
-                                                                   '成功' if(line['status'] == 0) else '失败',
-                                                                   line['errMsg'])
+                                                                    '成功' if(line['status'] == 0) else '失败',
+                                                                    line['errMsg'])
             if 'plain' in line:
                 for p in line['plain']:
                     ps = '\t'
@@ -64,3 +64,18 @@ def explain(url, username, password, sql):
     except Exception as e:
         return str(e)
 
+
+def information(params):
+    headers = {'Content-Type': 'application/json'}
+    params = json.dumps({'dbInfo': params})
+    try:
+        exec_req = client.Request(config.DB_INFORMATION_URL, data=bytes(params, 'utf-8'), headers=headers)
+        exec_resp = client.urlopen(exec_req)
+        if exec_resp.code != 200:
+            return 'request umc failed, resp code: %d' % exec_resp.code
+        result = json.loads(str(exec_resp.read(), 'utf-8'))
+        if result['errCode']:
+            return result['errCode']
+        return result['data']
+    except Exception as e:
+        return str(e)
