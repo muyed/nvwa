@@ -17,7 +17,7 @@ def _format_addr(s):
 
 def send(subject, body, to, cc=None):
     msg_id = make_msgid()
-    msg = MIMEText(body.encode('utf-8'), 'plain', 'utf-8')
+    msg = MIMEText(body, 'plain', 'utf-8')
     msg['From'] = _format_addr('女娲<%s>' % from_addr)
     msg['To'] = ','.join(to)
     msg['Subject'] = Header(subject, 'utf-8').encode()
