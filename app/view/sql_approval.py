@@ -248,7 +248,7 @@ def approval():
                 ''' % (getattr(approval, 'promoter'), getattr(approval, 'cause'), getattr(approval, 'sql'),
                        getattr(approval, 'approver'), getattr(approval, 'approval_opinion'))
 
-        send(subject, body, [getattr(approval, 'email')], ['yunzaocenter@3songshu.com'])
+        send(subject, body, [getattr(promoter, 'email')], ['yunzaocenter@3songshu.com'])
 
     return redirect('/sql/approval/list.html')
 
