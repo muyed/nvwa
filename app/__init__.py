@@ -17,7 +17,7 @@ config = configs[APP_ENV]
 app = Flask(__name__, template_folder='static/html', static_url_path='')
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "*", "max_age": 3600}})
 
 
 if isinstance(config.REDIS_CONFIG, list):
