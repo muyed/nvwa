@@ -1,6 +1,7 @@
 import json
 import javaobj
 from flask import Flask, request, g, render_template
+from flask_cors import CORS
 from datetime import timedelta
 from config import configs, APP_ENV
 # from rediscluster import StrictRedisCluster
@@ -15,6 +16,8 @@ config = configs[APP_ENV]
 
 app = Flask(__name__, template_folder='static/html', static_url_path='')
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
+
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 if isinstance(config.REDIS_CONFIG, list):
