@@ -7,6 +7,8 @@
               <li><a href="/task/current.html">进行中</a></li>
               <li><a href="/task/hist.html">我的历史任务</a></li>
 
+               <li><a href="/sql/approval/list.html">SQL审核</a></li>
+
               {% if '管理员' in user.roles %}
               <li><a href="/task/query.html">全部任务</a></li>
               <li class="dropdown">
@@ -16,6 +18,7 @@
                     <li><a href="/gitlab/project/config/list.html">项目设置</a></li>
                     <li><a href="/gitlab/manage.html">gitlab设置</a></li>
                     <li><a href="/jenkins/manage.html">jenkins设置</a></li>
+                    <li><a href="/db/list.html">db设置</a></li>
                 </ul>
               </li>
               {% endif %}

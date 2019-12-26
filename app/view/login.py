@@ -17,6 +17,7 @@ def auth(auth=None):
         @functools.wraps(func)
         def wrapper(*args, **kw):
             sid = request.cookies.get('sid')
+            g.sid = sid
             try:
                 session = redis.get(sid)
                 if not session:

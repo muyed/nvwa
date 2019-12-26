@@ -2,22 +2,48 @@
 <html lang="zh-CN">
   {% include 'common/head.html' %}
 
+    <style>
+      .subscript{
+        top: 10px;
+        color: #fff;
+        height: 25px;
+        width: 36px;
+        position: absolute;
+        right: 20px;
+        text-align: center;
+        line-height: 26px;
+        font-family: "黑体";
+        background-color: #0c60ee;
+        -moz-transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+      }
+    </style>
   <body>
 
     {% include 'common/navbar.html' %}
 
     <div class="container">
-
-      <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
-        <h1>Navbar example</h1>
-        <p>This example is a quick exercise to illustrate how the default, static and fixed to top navbar work. It includes the responsive CSS and HTML, so it also adapts to your viewport and device.</p>
-        <p>To see the difference between static and fixed top navbars, just scroll.</p>
-        <p>
-          <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
-        </p>
-      </div>
 
+        <div class="row">
+
+          {% for app in apps %}
+          <div class="col-xs-6 col-md-2">
+            <div class="subscript">{% if app.env == 0 %}日常{% endif %}{% if app.env == 1 %}预发{% endif %}{% if app.env == 2 %}线上{% endif %}</div>
+            <a href="{{app.url}}" target="_blank" class="thumbnail" style="text-decoration:none">
+              <div style="height: 30px"><h4 align="center">
+                {{app.app_name}}
+              </h4></div>
+              <div style="height: 55px; text-align: center">{{app.app_desc}}</div>
+            </a>
+          </div>
+          {% endfor %}
+
+        </div>
+      </div>
     </div> <!-- /container -->
 
 

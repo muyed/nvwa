@@ -1,6 +1,7 @@
 from app import g
 from .model import *
 import math
+import datetime
 
 
 class BaseService(object):
@@ -166,6 +167,51 @@ class TaskLogService(BaseService):
     def __init__(self):
         super(TaskLogService, self).__init__(TaskLog)
 
+    group_daily_sql = '''
+        select count(tl.task_status), t.project_name 
+        from task_log tl, task t 
+        where t.id = tl.task_id and t.project_name != '' and tl.task_status = 2 and tl.gmt_create >= '%s'
+        group by t.project_name;
+    '''
+
+    group_pre_sql = '''
+        select count(tl.task_status), t.project_name 
+        from task_log tl, task t 
+        where t.id = tl.task_id and t.project_name != '' and tl.task_status = 4 and tl.gmt_create >= '%s'
+        group by t.project_name;
+    '''
+
+    group_prod_sql = '''
+        select count(tl.task_status), t.project_name 
+        from task_log tl, task t
+        where t.id = tl.task_id and t.project_name != '' and tl.task_status = 7 and tl.gmt_create >= '%s'
+        group by t.project_name;
+    '''
+
+    def group_daily(self):
+        start = datetime.date.today()
+        one_day = datetime.timedelta(days=1)
+        while start.weekday() != 0:
+            start -= one_day
+        result = g.db.execute(self.group_daily_sql % str(start)).fetchall()
+        return [{'project': i[1], 'count': i[0]} for i in result]
+
+    def group_pre(self):
+        start = datetime.date.today()
+        one_day = datetime.timedelta(days=1)
+        while start.weekday() != 0:
+            start -= one_day
+        result = g.db.execute(self.group_pre_sql % str(start)).fetchall()
+        return [{'project': i[1], 'count': i[0]} for i in result]
+
+    def group_prod(self):
+        start = datetime.date.today()
+        one_day = datetime.timedelta(days=1)
+        while start.weekday() != 0:
+            start -= one_day
+        result = g.db.execute(self.group_prod_sql % str(start)).fetchall()
+        return [{'project': i[1], 'count': i[0]} for i in result]
+
 
 class RelUserTaskService(BaseService):
     def __init__(self):
@@ -181,6 +227,76 @@ class ProjectConfigService(BaseService):
         if result:
             result = create_model(self.table_cls, result.to_dict(True))
         return result
+
+
+class AppInfoService(BaseService):
+    def __init__(self):
+        super(AppInfoService, self).__init__(AppInfo)
+
+
+class SqlApprovalService(BaseService):
+    def __init__(self):
+        super(SqlApprovalService, self).__init__(SqlApproval)
+
+    _group_by_db_sql = '''
+        select count(id), db_name from sql_approval where db_name is not null and gmt_create >= '%s' group by db_name
+    '''
+
+    _group_by_promoter_sql = '''
+        select count(id), promoter from sql_approval where db_name is not null and gmt_create >= '%s' group by promoter
+    '''
+
+    def my_list(self, query, page={'current': 1}):
+        if 'current' not in page or page['current'] < 1:
+            page['current'] = 1
+        if 'size' not in page:
+            page['size'] = 20
+
+        query['row_status'] = 0
+        offset = (page['current'] - 1) * page['size']
+
+        username = g.user['username']
+        conditions = [SqlApproval.promoter == username, SqlApproval.approver == username, SqlApproval.executor == username]
+
+        result = g.db.query(self.table_cls).filter(or_(*conditions)).filter_by(**query).order_by('-id').offset(offset)\
+            .limit(page['size'])
+
+        if not result:
+            page['total'] = 0
+            return []
+        page['total'] = int(math.ceil(g.db.query(self.table_cls).filter(or_(*conditions)).filter_by(**query)
+                                      .count() / page['size']))
+
+        return [create_model(self.table_cls, r.to_dict(True)) for r in list(result)]
+
+    def group_by_db(self):
+        start = datetime.date.today()
+        one_day = datetime.timedelta(days=1)
+        while start.weekday() != 0:
+            start -= one_day
+        result = g.db.execute(self._group_by_db_sql % str(start)).fetchall()
+        return [{'db': i[1], 'count': i[0]} for i in result]
+
+    def group_by_promoter(self):
+        start = datetime.date.today()
+        one_day = datetime.timedelta(days=1)
+        while start.weekday() != 0:
+            start -= one_day
+        result = g.db.execute(self._group_by_promoter_sql % str(start)).fetchall()
+        return [{'promoter': i[1], 'count': i[0]} for i in result]
+
+
+class DbInfoService(BaseService):
+    def __init__(self):
+        super(DbInfoService, self).__init__(DbInfo)
+
+    def query_by_name(self, db_name):
+        query = {'row_status': 0, 'db_name': db_name}
+        result = self.query_list(query)
+        if result:
+            return result[0]
+        return None
+
 
 
 

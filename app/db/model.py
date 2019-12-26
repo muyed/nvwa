@@ -40,6 +40,9 @@ class Role(Base, BaseModel):
     __tablename__ = 'role'
     username = Column(String(50))
     role = Column(String(50))
+    is_manager = Column(Integer())
+    is_owner = Column(Integer())
+    email = Column(String())
 
 
 class SysConfig(Base, BaseModel):
@@ -85,3 +88,33 @@ class ProjectConfig(Base, BaseModel):
     test_job = Column(String(128))
     pre_job = Column(String(128))
     pro_job = Column(String(128))
+    is_seal = Column(Integer())
+
+
+class AppInfo(Base, BaseModel):
+    __tablename__ = 'app_info'
+    app_name = Column(String(128))
+    app_desc = Column(String(512))
+    url = Column(String(512))
+    env = Column(Integer())
+
+
+class SqlApproval(Base, BaseModel):
+    __tablename__ = 'sql_approval'
+    title = Column(String(256))
+    sql = Column(Text())
+    cause = Column(String(1024))
+    promoter = Column(String(45))
+    approver = Column(String(45))
+    executor = Column(String(45))
+    status = Column(Integer())
+    approval_opinion = Column(String(1024))
+    db_name = Column(String(45))
+
+
+class DbInfo(Base, BaseModel):
+    __tablename__ = 'db_info'
+    db_name = Column(String(45))
+    db_url = Column(String(128))
+    username = Column(String(45))
+    password = Column(String(1024))

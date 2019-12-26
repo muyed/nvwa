@@ -3,6 +3,7 @@ import app.view.gitlab as gitlab
 import app.view.jenkins as jenkins
 import json
 import requests
+from ..util import dingtalk_util
 
 
 task_service = TaskService()
@@ -116,7 +117,7 @@ def task_query():
 
     query = request.args.to_dict()
     for k in list(query):
-        if not query[k]:
+        if not query[k] or k == 'current':
             query.pop(k)
 
     tasks = task_service.query_list(query, page)
@@ -272,6 +273,17 @@ def edit_task():
     return redirect('/task/current.html')
 
 
+@app.route('/task/del/<id>.html', methods=['DELETE'])
+@auth(['开发', '运维', '管理员'])
+def del_task(id):
+    task = task_service.get_by_id(id)
+    if task and task.status < 6:
+        task_service.del_by_id(id)
+    else:
+        return json.dumps({'ok': False, 'msg': '已上线的任务不可删除'})
+    return json.dumps({'ok': True})
+
+
 @app.route('/task/submittest.html', methods=['POST'])
 @auth(['开发'])
 def submit_test():
@@ -299,7 +311,7 @@ def submit_test():
 
 
 @app.route('/task/test/deploy.html', methods=['POST'])
-@auth(['测试'])
+@auth(['测试', '开发'])
 def test_deploy():
     task = task_service.get_by_id(int(request.form.to_dict()['id']))
     project_config = project_config_service.get_by_project(task.project_id)
@@ -346,6 +358,8 @@ def test_deploy():
     finally:
         dev_branch.delete()
         mr.delete()
+
+    dingtalk_util.send_deploy_msg(task.project_name, '测试环境')
 
     try:
         jk = jenkins.get_jk()
@@ -406,7 +420,7 @@ def pass_test(id):
 
 
 @app.route('/task/pre/deploy.html', methods=['POST'])
-@auth(['运维'])
+@auth(['运维', '测试', '开发'])
 def pre_deploy():
     task = task_service.get_by_id(int(request.form.to_dict()['id']))
     project_config = project_config_service.get_by_project(task.project_id)
@@ -426,6 +440,8 @@ def pre_deploy():
         return json.dumps({'ok': False, 'msg': 'merge代码失败，请联系开发解决冲突后再重试'})
     finally:
         mr.delete()
+
+    dingtalk_util.send_deploy_msg(task.project_name, '预发环境')
 
     try:
         jk = jenkins.get_jk()
@@ -471,6 +487,8 @@ def prod_deploy():
     project_config = project_config_service.get_by_project(task.project_id)
     if not project_config:
         return json.dumps({'ok': False, 'msg': '项目还未配置部署配置，请联系管理员添加'})
+    if getattr(project_config, 'is_seal') == 1:
+        return json.dumps({'ok': False, 'msg': '该项目目前处于禁止发布阶段'})
 
     project = gitlab.project_by_id(task.project_id)
 
@@ -485,6 +503,8 @@ def prod_deploy():
         return json.dumps({'ok': False, 'msg': 'merge代码失败，请联系开发解决冲突后再重试'})
     finally:
         mr.delete()
+
+    dingtalk_util.send_deploy_msg(task.project_name, '线上环境')
 
     try:
         jk = jenkins.get_jk()

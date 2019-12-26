@@ -672,7 +672,12 @@
             url: '/task/'+ taskId +'/merge/master',
             method: 'post',
             success: (d) => {
-                 window.location.reload();
+                d = JSON.parse(d);
+                if (d.ok){
+                    window.location.reload();
+                } else {
+                    alert(d.msg)
+                }
             }
         })
     }
